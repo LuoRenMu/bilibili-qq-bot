@@ -8,15 +8,16 @@
 4. 此时已经完成所有步骤，机器人将自动监听群消息的Bvid 视频短链接 视频长连接 卡片消息
 
 ## 修改配置信息
+json文件不支持注释
 ````json
 {
   "banned_group_bilibili_push": [  // 禁止推送的群
-    753354850,
-    966949714
+    1234,
+    1234
   ],
   "banned_group_bvid_listen": [  // 禁止监听bvid的群
-    753354850,
-    966949714
+    1234,
+    1234
   ],
   "bilibili_video_delete_timing": 3,  //定时删除时间、以小时为单位
   "bilibili_video_length_limit": 5, //禁止监听超过的视频长度、以分钟为单位
