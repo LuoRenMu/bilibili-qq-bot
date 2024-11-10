@@ -24,6 +24,7 @@ class PrivateEvenListen {
         if (privateMessage.privateSender.userId == SETTING.botOwner) {
             if (privateMessage.message == "更新配置文件") {
                 loadSetting()
+                bot.sendPrivateMsg(privateMessage.userId, "success", false)
             }
         }
     }

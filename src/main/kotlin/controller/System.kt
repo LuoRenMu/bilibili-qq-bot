@@ -1,5 +1,6 @@
 package cn.luorenmu.controller
 
+import cn.luorenmu.task.BilibiliMessagePush
 import com.mikuac.shiro.common.utils.MsgUtils
 import com.mikuac.shiro.common.utils.ShiroUtils
 import com.mikuac.shiro.core.BotContainer
@@ -16,10 +17,17 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("")
 class System(
     private val botContainer: BotContainer,
+    private val bilibiliMessagePush: BilibiliMessagePush
 ) {
     @RequestMapping("/")
     fun system(): String {
         return "running success "
+    }
+
+    @RequestMapping("/push")
+    fun push(): String {
+        bilibiliMessagePush.timingPushArticle()
+        return "success"
     }
 
 

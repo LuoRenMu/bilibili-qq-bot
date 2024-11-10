@@ -21,11 +21,17 @@ data class BilibiliCacheUtils(
         }
     }
 
+    @Synchronized
     fun writeCache() {
         ReadWriteFile.entityWriteFile(jsonPath, this)
     }
+    @Synchronized
+    fun deleteThenWriteCache() {
+        File(jsonPath).delete()
+        ReadWriteFile.entityWriteFile(jsonPath, this)
+    }
 
-
+    @Synchronized
     fun readCache(): BilibiliCacheUtils {
         val readFileJson = ReadWriteFile.readFileJson(jsonPath)
         return readFileJson.to<BilibiliCacheUtils>()

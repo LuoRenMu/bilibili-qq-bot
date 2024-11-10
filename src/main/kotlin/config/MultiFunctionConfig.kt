@@ -4,6 +4,7 @@ import cn.hutool.core.io.resource.ResourceUtil
 import cn.luorenmu.MainApplication
 import cn.luorenmu.action.listenProcess.BilibiliMessageCollect
 import cn.luorenmu.common.utils.*
+import cn.luorenmu.config.entity.groups
 import cn.luorenmu.file.InitializeFile
 import cn.luorenmu.file.ReadWriteFile
 import com.mikuac.shiro.core.BotContainer
@@ -73,6 +74,7 @@ class MultiFunctionConfig(
                 updateSetting {
                     val bot = botContainer.robots.values.first()
                     val groupList = bot!!.groupList.data.map { n -> n.groupId }
+                    groups = groupList
                     it.bannedGroupBilibiliPush = groupList
                     it.bannedGroupBvidListen = groupList
                     it
