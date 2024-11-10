@@ -33,6 +33,8 @@ dependencies {
     implementation("io.github.oshai:kotlin-logging-jvm:6.0.3")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation(files("lib/MultifunctionalAutoHelper-Java.jar"))
+
+
     implementation("org.springframework.boot:spring-boot-starter-aop")
 
 

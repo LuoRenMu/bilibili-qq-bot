@@ -96,7 +96,7 @@ class BilibiliEventListen(
     /**
      *  @param bvid (bv号)
      *  @param outputPath video save local path need file name and video type (default type is flv)
-     *  @return null if video download failed or video too large (limit length $minute minute) else string
+     *  @return null is video download failed  if video too large (limit length $minute minute) return false else true
      */
     fun downloadVideo(bvid: String, cid: Long, outputPath: String): Boolean? {
         synchronized(bilibiliVideoLongLink) {
@@ -113,8 +113,9 @@ class BilibiliEventListen(
                     return false
                 }
                 videoInfos.durl.firstOrNull()?.let { videoInfo ->
-                    bilibiliRequestData.downloadVideo(videoInfo.url, outputPath)
-                    return true
+                    if (bilibiliRequestData.downloadVideo(videoInfo.url, outputPath)) {
+                        return true
+                    }
                 }
             }
         } catch (e: Exception) {

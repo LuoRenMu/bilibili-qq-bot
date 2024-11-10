@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 
 @EnableScheduling
 @SpringBootApplication
+
 @ConfigurationPropertiesScan
 @EnableConfigurationProperties
 class MainApplication

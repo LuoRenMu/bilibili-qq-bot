@@ -9,3 +9,6 @@ shiro:
 bilibili:
   limit: 5
   delete: 5
+spring:
+  profiles:
+    active: default

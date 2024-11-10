@@ -1,13 +1,45 @@
 # 从LoMu-Bot中分离出的单独功能
-如何使用？:    
+
+如何使用？:
+
 1. LiteLoaderNTQQ 下载 LLOneBot插件 正向websocket 3001端口(默认情况是3001)
-2. 启动jar文件
-3. 当日志窗口回显success时或浏览器访问http://localhost/8080 回显success 
+2. 启动jar文件 java -jar onebot-Lomu-1.0.jar
+3. 当日志窗口回显success时或浏览器访问http://localhost/8080 回显success
 4. 此时已经完成所有步骤，机器人将自动监听群消息的Bvid 视频短链接 视频长连接 卡片消息
 
 ## 修改配置信息
-* 修改websocket端口 shiro.ws.client.url: "ws://127.0.0.1:3001"
-* 修改视频大小限制  java -jar --bilibili.limit=5 (只发送5分钟以下的视频)        
-* 修改视频删除时间  java -jar --bilibili.delete=0 (不删除 以小时为单位)
+````json
+{
+  "banned_group_bilibili_push": [  // 禁止推送的群
+    753354850,
+    966949714
+  ],
+  "banned_group_bvid_listen": [  // 禁止监听bvid的群
+    753354850,
+    966949714
+  ],
+  "bilibili_video_delete_timing": 3,  //定时删除时间、以小时为单位
+  "bilibili_video_length_limit": 5, //禁止监听超过的视频长度、以分钟为单位
+  "bot_owner": 0, // 机器人主人QQ
+  "group_bvid_listen": true, //bvid视频监听总开关
+  "listen_list": [  //监听列表、支持监听多个用户 (暂时只支持监听用户动态)
+    {
+      "live_broadcast": false,  //暂未支持
+      "uid": ""  //监听的b站用户uid
+    },
+    {  
+      "live_broadcast": false,  
+      "uid": ""  
+    }
+  ]
+}
+````
+
+
+### 命令(后期将修改为自定义.)
+
+需在setting中设置bot_owner
+
+1. 更新配置文件
 
 本项目由LiteLoaderNTQQ、LLonebot 、shiro 强力驱动

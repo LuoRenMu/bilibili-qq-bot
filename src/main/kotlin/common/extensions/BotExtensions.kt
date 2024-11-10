@@ -1,7 +1,7 @@
 package cn.luorenmu.common.extensions
 
-import cn.luorenmu.entiy.RecentlyMessageQueue
-import cn.luorenmu.entiy.SelfSendMsg
+import cn.luorenmu.entity.RecentlyMessageQueue
+import cn.luorenmu.entity.SelfSendMsg
 import com.mikuac.shiro.core.Bot
 import com.mikuac.shiro.dto.action.common.ActionData
 import com.mikuac.shiro.dto.action.common.MsgId

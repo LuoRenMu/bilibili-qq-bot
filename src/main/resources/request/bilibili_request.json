@@ -9,11 +9,11 @@
       },
       {
         "name": "Referer",
-        "content" : "https://www.bilibili.com/"
+        "content": "https://www.bilibili.com/"
       },
       {
         "name": "Origin",
-        "content" : "https://www.bilibili.com/"
+        "content": "https://www.bilibili.com/"
       }
     ]
   },
@@ -27,11 +27,25 @@
       },
       {
         "name": "Referer",
-        "content" : "https://www.bilibili.com/"
+        "content": "https://www.bilibili.com/"
       },
       {
         "name": "Origin",
-        "content" : "https://www.bilibili.com/"
+        "content": "https://www.bilibili.com/"
+      }
+    ]
+  },
+  "get_space_info": {
+    "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?host_mid=${uid}",
+    "method": "GET",
+    "headers": [
+      {
+        "name": "User-Agent",
+        "content": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+      },
+      {
+        "name": "Cookie",
+        "content": "buvid3=123;buvid4=123"
       }
     ]
   }

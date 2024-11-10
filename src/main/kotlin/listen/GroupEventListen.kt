@@ -1,6 +1,7 @@
 package cn.luorenmu.listen
 
 import cn.luorenmu.action.listenProcess.BilibiliEventListen
+import cn.luorenmu.common.utils.SETTING
 import com.mikuac.shiro.annotation.GroupMessageHandler
 import com.mikuac.shiro.annotation.common.Shiro
 import com.mikuac.shiro.core.Bot
@@ -25,6 +26,10 @@ class GroupEventListen(
     fun groupMsgListen(bot: Bot, groupMessageEvent: GroupMessageEvent) {
         val groupId = groupMessageEvent.groupId
         val message = groupMessageEvent.message
-        bilibiliEventListen.process(bot, groupId, message)
+        if (SETTING.groupBvidListen) {
+            if (!SETTING.bannedGroupBvidListen.contains(groupId)) {
+                bilibiliEventListen.process(bot, groupId, message)
+            }
+        }
     }
 }

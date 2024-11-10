@@ -1,9 +1,6 @@
 package cn.luorenmu.action.listenProcess
 
-import cn.luorenmu.action.listenProcess.entiy.BilibiliPageInfoData
-import cn.luorenmu.action.listenProcess.entiy.BilibiliPageListInfo
-import cn.luorenmu.action.listenProcess.entiy.BilibiliVideoInfo
-import cn.luorenmu.action.listenProcess.entiy.BilibiliVideoInfoData
+import cn.luorenmu.action.listenProcess.entity.response.*
 import cn.luorenmu.entiy.Request
 import cn.luorenmu.file.ReadWriteFile
 import cn.luorenmu.request.RequestController
@@ -67,4 +64,16 @@ class BilibiliRequestData {
         }
         return null
     }
+
+    fun space(uid: String): BilibiliSpace? {
+        val requestController = RequestController("bilibili_request.get_space_info")
+        requestController.replaceUrl("uid", uid)
+        val resp = requestController.request()
+        resp?.let {
+            val result = it.body()
+            return result.to<BilibiliSpace>()
+        }
+        return null
+    }
+
 }
