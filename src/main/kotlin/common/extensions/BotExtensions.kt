@@ -40,9 +40,11 @@ fun selfRecentlySent(id: Long, message: String): Boolean {
 
 fun Bot.sendGroupMsg(groupId: Long, message: String): ActionData<MsgId>? {
     if (message.length > SETTING.textForward) {
-        val chunked = message.chunked(SETTING.textForward)
-        val buildForwardMessage = buildForwardMessage(this.selfId, chunked.toMutableList())
-        return sendGroupForwardMsg(groupId, buildForwardMessage)
+        if (!message.contains("[CQ:,")) {
+            val chunked = message.chunked(SETTING.textForward)
+            val buildForwardMessage = buildForwardMessage(this.selfId, chunked.toMutableList())
+            return sendGroupForwardMsg(groupId, buildForwardMessage)
+        }
     }
 
     return this.sendGroupMsg(groupId, message, false)
@@ -218,7 +220,7 @@ fun Bot.groupList(retry: Int = 0): List<Long> {
 fun buildForwardMessage(id: Long, list: MutableList<String>): List<Map<String, Any>> {
     for ((index, str) in list.withIndex()) {
         list[index] = MESSAGE_CONVERT.replace(MessageConvert.ID.FORWARD_IMAGE, MessageConvert.FORMAT.ORIGIN_IMAGE, str)
-            .replace(MessageConvert.FORMAT.ORIGIN_TEXT, str).build()
+            .replace(MessageConvert.ID.FORWARD_TEXT, MessageConvert.FORMAT.ORIGIN_TEXT, str).build()
     }
     return ShiroUtils.generateForwardMsg(id, "1", list)
 }

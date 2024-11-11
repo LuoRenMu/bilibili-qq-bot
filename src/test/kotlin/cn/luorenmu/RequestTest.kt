@@ -23,8 +23,8 @@ class RequestTest(
 ) {
     @Test
     fun tset() {
-        val articleMessageCollect = bilibiliMessageCollect.articleMessageCollect("63282209", 5)
-        val article = articleMessageCollect.firstOrNull { it.id == "998549878814539776" }
+        val articleMessageCollect = bilibiliMessageCollect.articleMessageCollect("174501086", 5)
+        val article = articleMessageCollect.firstOrNull { it.id == "998572165385158663" }
         val generateForwardMsg = ShiroUtils.generateForwardMsg(
             2371643417,
             "LomuBot",
