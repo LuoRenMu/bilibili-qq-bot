@@ -155,7 +155,7 @@ fun Bot.sendBilibiliArticle(
     groupList: List<Long>,
     send: (Long, String) -> Boolean,
 ) {
-    var forwardMessage: List<Map<String, Any>>? = null
+    var forwardMessage: List<Map<String, Any>> = mutableListOf()
 
     //图片数量大于3通过转发发送
     if (lastArticle.picUrl.size > SETTING.imageForward) {
@@ -185,9 +185,9 @@ fun Bot.sendBilibiliArticle(
         )
 
         // 转发内容
-        forwardMessage?.let { fm ->
-            this.sendGroupForwardMsg(groupId, fm)
-        } ?: run {
+        if (forwardMessage.isNotEmpty()) {
+            this.sendGroupForwardMsg(groupId, forwardMessage)
+        } else {
             // 不转发图片
             lastArticle.picUrl.forEach { picUrl ->
                 send(groupId, MsgUtils.builder().img(picUrl).build())
