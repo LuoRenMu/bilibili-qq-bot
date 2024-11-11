@@ -38,7 +38,7 @@ class MultiFunctionConfig(
 
 
     private val resourcesRequestJson = mapOf(
-        "bilibili_request" to "request/bilibili_request.json"
+        "bilibili_request" to "request/bilibili_request.json",
     )
 
     init {
@@ -57,11 +57,14 @@ class MultiFunctionConfig(
             JsonObjectUtils.putRequestJson(file.key, json)
         }
 
+        initMessageConvert()
+
     }
 
 
     override fun onApplicationEvent(event: ApplicationReadyEvent) {
         log.info { "LoMu Bot running successfully!" }
+
         // 与qq成功建立websocket链接
         thread {
             while (true) {

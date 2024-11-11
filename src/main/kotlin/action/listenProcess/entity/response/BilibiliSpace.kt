@@ -348,7 +348,7 @@ data class Opus(
 
 data class Draw(
     val id: Long,
-    val items: List<Item2>,
+    val items: ArrayList<Item2>,
 )
 
 data class Item2(

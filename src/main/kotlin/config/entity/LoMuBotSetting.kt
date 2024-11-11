@@ -9,6 +9,10 @@ import com.alibaba.fastjson2.annotation.JSONField
 data class LoMuBotSetting(
     @JSONField(name = "bot_owner")
     var botOwner: Long = 0L,
+    @JSONField(name = "image_forward")
+    var imageForward : Int = 3,
+    @JSONField(name = "text_forward")
+    var textForward : Int = 100,
     @JSONField(name = "group_bvid_listen")
     var groupBvidListen: Boolean = true,
     @JSONField(name = "bilibili_video_delete_timing")

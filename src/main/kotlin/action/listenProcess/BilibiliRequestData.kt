@@ -1,11 +1,15 @@
 package cn.luorenmu.action.listenProcess
 
 import cn.luorenmu.action.listenProcess.entity.response.*
+import cn.luorenmu.common.utils.SETTING
+import cn.luorenmu.common.utils.getVideoPath
 import cn.luorenmu.entiy.Request
 import cn.luorenmu.file.ReadWriteFile
+import cn.luorenmu.listen.log
 import cn.luorenmu.request.RequestController
 import com.alibaba.fastjson2.to
 import org.springframework.stereotype.Component
+import java.io.File
 
 /**
  * @author LoMu
@@ -20,7 +24,38 @@ import org.springframework.stereotype.Component
 @Component
 class BilibiliRequestData {
 
-    fun downloadVideo(url: String, outputPath: String): Boolean {
+    /**
+     *  @param bvid (bv号)
+     *  @return null is video download failed  if video too large (limit length $minute minute) return false else true
+     */
+    fun downloadVideo(bvid: String, cid: Long): String? {
+        val outputPath = getVideoPath("bilibili/$bvid.flv")
+        synchronized(BilibiliRequestData::class) {
+            if (File(outputPath).exists()) {
+                return outputPath
+            }
+        }
+
+        try {
+            val videoInfos = getVideoInfo(bvid, cid)
+            videoInfos?.let {
+                val minute = videoInfos.timelength / 1000 / 60
+                if (minute > SETTING.bilbiliLimit) {
+                    return ""
+                }
+                videoInfos.durl.firstOrNull()?.let { videoInfo ->
+                    if (downloadStream(videoInfo.url, outputPath)) {
+                        return outputPath
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            log.error { e.stackTraceToString() }
+        }
+        return null
+    }
+
+    fun downloadStream(url: String, outputPath: String): Boolean {
         val requestDetailed = Request.RequestDetailed()
         val headers = Request.RequestParam("referer", "https://www.bilibili.com")
         requestDetailed.url = url

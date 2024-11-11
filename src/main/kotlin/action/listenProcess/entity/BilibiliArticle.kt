@@ -7,6 +7,7 @@ package cn.luorenmu.action.listenProcess.entity
 data class BilibiliArticle(
     val id: String,
     val text: String,
-    val picUrl: List<String>,
+    val picUrl: MutableList<String>,
     val isTopping: Boolean,
+    val videoBvid : String? = null,
 )

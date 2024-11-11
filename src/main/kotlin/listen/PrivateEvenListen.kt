@@ -1,5 +1,8 @@
 package cn.luorenmu.listen
 
+import cn.luorenmu.action.listenProcess.BilibiliMessageCollect
+import cn.luorenmu.action.listenProcess.BilibiliRequestData
+import cn.luorenmu.common.extensions.sendPrivateBilibiliArticle
 import cn.luorenmu.common.utils.SETTING
 import cn.luorenmu.common.utils.loadSetting
 import com.mikuac.shiro.annotation.PrivateMessageHandler
@@ -17,14 +20,29 @@ import org.springframework.stereotype.Component
 
 @Component
 @Shiro
-class PrivateEvenListen {
+class PrivateEvenListen(
+    val bilibiliMessageCollect: BilibiliMessageCollect,
+    val bilibiliRequestData: BilibiliRequestData,
+) {
 
     @PrivateMessageHandler
     fun privateMessageHandler(bot: Bot, privateMessage: PrivateMessageEvent) {
         if (privateMessage.privateSender.userId == SETTING.botOwner) {
-            if (privateMessage.message == "更新配置文件") {
-                loadSetting()
-                bot.sendPrivateMsg(privateMessage.userId, "success", false)
+            when (privateMessage.message) {
+                "更新配置文件" -> {
+                    loadSetting()
+                    bot.sendPrivateMsg(privateMessage.userId, "success", false)
+                    return
+                }
+            }
+            if (privateMessage.message.startsWith("最新动态")) {
+                val uid = privateMessage.message.split(" ")[1]
+                val articleMessageCollect = bilibiliMessageCollect.articleMessageCollect(uid, 5)
+                bot.sendPrivateBilibiliArticle(
+                    articleMessageCollect.maxBy { it.id.toLong() },
+                    bilibiliRequestData,
+                    privateMessage.userId
+                )
             }
         }
     }

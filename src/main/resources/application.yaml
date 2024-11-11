@@ -6,9 +6,6 @@ shiro:
     client:
       enable: true
       url: "ws://127.0.0.1:3001"
-bilibili:
-  limit: 5
-  delete: 5
 spring:
   profiles:
     active: default

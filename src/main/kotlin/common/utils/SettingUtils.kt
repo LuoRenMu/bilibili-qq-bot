@@ -20,6 +20,8 @@ val SETTING_PATH = ReadWriteFile.CURRENT_PATH + "setting.json"
 fun initSetting(lomuBotSetting: LoMuBotSetting = LoMuBotSetting()): Boolean {
     if (File(SETTING_PATH).exists()) {
         SETTING = loadSetting()
+        // 更新配置文件 在原有的基础上添加了更多字段
+        ReadWriteFile.entityWriteFile(SETTING_PATH, SETTING)
         return false
     }
     ReadWriteFile.entityWriteFile(SETTING_PATH, lomuBotSetting)
