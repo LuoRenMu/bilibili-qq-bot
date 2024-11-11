@@ -20,15 +20,17 @@ data class LoMuBotSetting(
     @JSONField(name = "bilibili_video_length_limit")
     var bilbiliLimit: Int = 5,
     @JSONField(name = "banned_group_bvid_listen")
-    var bannedGroupBvidListen: List<Long> = arrayListOf(0L),
+    var bannedGroupBvidListen: MutableList<Long> = mutableListOf(0L),
     @JSONField(name = "banned_group_bilibili_push")
-    var bannedGroupBilibiliPush: List<Long> = arrayListOf(0L),
+    var bannedGroupBilibiliPush: MutableList<Long> = mutableListOf(0L),
     @JSONField(name = "listen_list")
-    var listenList: List<ListenSetting> = arrayListOf(ListenSetting("")),
+    var listenList: MutableList<ListenSetting> = mutableListOf(ListenSetting("")),
 )
 
 data class ListenSetting(
     var uid: String,
     @JSONField(name = "live_broadcast")
     var liveBroadcast: Boolean = false,
+    @JSONField(name = "group_bilibili_push")
+    var groupBilibiliPush: MutableList<Long> = mutableListOf(),
 )

@@ -76,7 +76,7 @@ class MultiFunctionConfig(
             if (initSetting()) {
                 updateSetting {
                     val bot = botContainer.robots.values.first()
-                    val groupList = bot!!.groupList.data.map { n -> n.groupId }
+                    val groupList = bot!!.groupList.data.map { n -> n.groupId }.toMutableList()
                     groups = groupList
                     it.bannedGroupBilibiliPush = groupList
                     it.bannedGroupBvidListen = groupList

@@ -47,14 +47,18 @@ class BilibiliMessagePush(
                     .maxBy { bilibiliArticle -> bilibiliArticle.id.toLong() })
             }
 
+            val groupList = it.groupBilibiliPush.ifEmpty {
+                bot().groupList(5).filter { groupFilter ->
+                    !SETTING.bannedGroupBilibiliPush.contains(groupFilter)
+                }
+            }
             //存在最新的动态
             lastArticles.forEach { lastArticle ->
                 bot().sendGroupListBilibiliarticle(
                     lastArticle,
                     bilibiliRequestData,
-                    bot().groupList(5).filter { groupFilter ->
-                        !SETTING.bannedGroupBilibiliPush.contains(groupFilter)
-                    })
+                    groupList
+                )
 
             }
 
