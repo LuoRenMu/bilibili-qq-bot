@@ -176,9 +176,9 @@ fun Bot.sendBilibiliArticle(
         send(
             groupId,
             MESSAGE_CONVERT.replace(
-                MessageConvert.ID.BILIBILI_ARTICLE, MessageConvert.FORMAT.ORIGIN_TEXT, lastArticle.text
+                MessageConvert.ID.BILIBILI_ARTICLE, MessageConvert.FORMAT.UP_NAME, lastArticle.name
             ).replace(
-                MessageConvert.ID.BILIBILI_ARTICLE, MessageConvert.FORMAT.UP_NAME
+                MessageConvert.FORMAT.ORIGIN_TEXT, lastArticle.text
             ).build()
         )
 
@@ -217,9 +217,8 @@ fun Bot.groupList(retry: Int = 0): List<Long> {
 
 fun buildForwardMessage(id: Long, list: MutableList<String>): List<Map<String, Any>> {
     for ((index, str) in list.withIndex()) {
-        list[index] =
-            MESSAGE_CONVERT.replace(MessageConvert.ID.FORWARD_IMAGE, MessageConvert.FORMAT.ORIGIN_IMAGE, str)
-                .replace(MessageConvert.ID.FORWARD_TEXT, MessageConvert.FORMAT.ORIGIN_TEXT).build()
+        list[index] = MESSAGE_CONVERT.replace(MessageConvert.ID.FORWARD_IMAGE, MessageConvert.FORMAT.ORIGIN_IMAGE, str)
+            .replace(MessageConvert.FORMAT.ORIGIN_TEXT, str).build()
     }
     return ShiroUtils.generateForwardMsg(id, "1", list)
 }

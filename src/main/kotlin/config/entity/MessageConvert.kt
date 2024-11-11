@@ -11,23 +11,22 @@ data class MessageConvert(
     @JSONField(name = "convert_messages")
     var convertMessages: List<MessageConvertFormat> = listOf(),
 ) {
-    private var text: String = ""
-    fun replace(id: String, format: String, text: String = this.text): MessageConvert {
-        this.text = text
-        convertMessages.firstOrNull { it.id == id }?.let {
-            val replaceDollardName = MatcherData.replaceDollardName(it.formatMessage, format, text)
-            if (replaceDollardName != it.formatMessage) {
-                this.text = replaceDollardName
-            }
+    private var formatText: String = ""
+    fun replace(id: String, format: String, text: String): MessageConvert {
 
-            return this
-        } ?: run {
-            return this
-        }
+        val covert = convertMessages.first { it.id == id }
+        this.formatText = MatcherData.replaceDollardName(covert.formatMessage, format, text)
+
+        return this
+    }
+
+    fun replace(format: String, text: String): MessageConvert {
+        this.formatText = MatcherData.replaceDollardName(formatText, format, text)
+        return this
     }
 
     fun build(): String {
-        return text
+        return this.formatText
     }
 
     class ID {
@@ -45,6 +44,8 @@ data class MessageConvert(
             const val UP_NAME = "up_name"
         }
     }
+
+
 }
 
 data class MessageConvertFormat(
