@@ -6,7 +6,7 @@
     },
     {
       "id": "forward_text",
-      "format_messages": "${origin_text}\nBy OneBot-LoMu"
+      "format_messages": "${origin_text}"
     },
     {
       "id": "forward_image",

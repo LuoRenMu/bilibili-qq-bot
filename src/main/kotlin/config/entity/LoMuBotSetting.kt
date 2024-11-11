@@ -12,7 +12,7 @@ data class LoMuBotSetting(
     @JSONField(name = "image_forward")
     var imageForward : Int = 3,
     @JSONField(name = "text_forward")
-    var textForward : Int = 100,
+    var textForward : Int = 300,
     @JSONField(name = "group_bvid_listen")
     var groupBvidListen: Boolean = true,
     @JSONField(name = "bilibili_video_delete_timing")

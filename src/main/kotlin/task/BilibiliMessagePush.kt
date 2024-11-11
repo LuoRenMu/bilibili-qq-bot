@@ -30,15 +30,16 @@ class BilibiliMessagePush(
 
     @Scheduled(cron = "0 */3 * * * *")
     fun timingPushArticle() {
-
+        if (SETTING.listenList.isEmpty() || SETTING.listenList.firstOrNull { it.uid.isNotBlank() } == null) {
+            return
+        }
         val listenList = SETTING.listenList
 
         listenList.forEach {
             val cache = BilibiliCacheUtils(it.uid)
-            var lastArticles = listOf<BilibiliArticle>()
 
-            if (BilibiliCacheUtils.exists(it.uid)) {
-                lastArticles = bilibiliMessageCollect.articleMessageCollect(it.uid, 5).filter { bilibiliArticle ->
+            val lastArticles: List<BilibiliArticle> = if (BilibiliCacheUtils.exists(it.uid)) {
+                bilibiliMessageCollect.articleMessageCollect(it.uid, 5).filter { bilibiliArticle ->
                     bilibiliArticle.id.toLong() > cache.readCache().lastArticle!!
                 }
             } else {
