@@ -282,7 +282,7 @@ data class ModuleDynamic(
 )
 
 data class Additional(
-    val common: Common,
+    val common: Common?,
     val type: String,
 )
 

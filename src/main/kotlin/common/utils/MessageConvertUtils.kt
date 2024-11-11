@@ -48,3 +48,4 @@ fun updateMessageConvert(messageConvert: (MessageConvert) -> MessageConvert) {
     File(MESSAGE_CONVERT_PATH).delete()
     initMessageConvert(new)
 }
+

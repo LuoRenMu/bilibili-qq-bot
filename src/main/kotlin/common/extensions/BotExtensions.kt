@@ -147,16 +147,6 @@ fun Bot.sendGroupListBilibiliarticle(
 }
 
 
-fun Bot.sendPrivateBilibiliArticle(
-    lastArticle: BilibiliArticle,
-    bilibiliRequestData: BilibiliRequestData,
-    private: Long,
-) {
-    sendBilibiliArticle(lastArticle, bilibiliRequestData, arrayListOf(private)) { privateId, message ->
-        sendPrivateMsgLimit(privateId, message)
-    }
-}
-
 fun Bot.sendBilibiliArticle(
     lastArticle: BilibiliArticle,
     bilibiliRequestData: BilibiliRequestData,
@@ -182,11 +172,14 @@ fun Bot.sendBilibiliArticle(
 
     //群推送
     groupList.forEach { groupId ->
-        // 非转发内容
+        // 发送文本内容
         send(
-            groupId, MESSAGE_CONVERT.replace(
+            groupId,
+            MESSAGE_CONVERT.replace(
                 MessageConvert.ID.BILIBILI_ARTICLE, MessageConvert.FORMAT.ORIGIN_TEXT, lastArticle.text
-            )
+            ).replace(
+                MessageConvert.ID.BILIBILI_ARTICLE, MessageConvert.FORMAT.UP_NAME
+            ).build()
         )
 
         // 转发内容
@@ -224,8 +217,9 @@ fun Bot.groupList(retry: Int = 0): List<Long> {
 
 fun buildForwardMessage(id: Long, list: MutableList<String>): List<Map<String, Any>> {
     for ((index, str) in list.withIndex()) {
-        list[index] = MESSAGE_CONVERT.replace(MessageConvert.ID.FORWARD_IMAGE, MessageConvert.FORMAT.ORIGIN_IMAGE, str)
-        list[index] = MESSAGE_CONVERT.replace(MessageConvert.ID.FORWARD_TEXT, MessageConvert.FORMAT.ORIGIN_TEXT, str)
+        list[index] =
+            MESSAGE_CONVERT.replace(MessageConvert.ID.FORWARD_IMAGE, MessageConvert.FORMAT.ORIGIN_IMAGE, str)
+                .replace(MessageConvert.ID.FORWARD_TEXT, MessageConvert.FORMAT.ORIGIN_TEXT).build()
     }
-    return ShiroUtils.generateForwardMsg(id, "LomuBot", list)
+    return ShiroUtils.generateForwardMsg(id, "1", list)
 }

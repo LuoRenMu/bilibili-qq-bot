@@ -2,7 +2,7 @@
   "convert_messages": [
     {
       "id": "bilibili_article",
-      "format_messages": "${origin_text}\nBy OneBot-LoMu"
+      "format_messages": "用户${up_name}更新了新内容\n${origin_text}\nBy OneBot-LoMu"
     },
     {
       "id": "forward_text",

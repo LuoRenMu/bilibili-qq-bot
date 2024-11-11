@@ -24,13 +24,15 @@ class BilibiliMessageCollect(
                     val imageUrls =
                         bilibiliItem.modules.moduleDynamic.major?.draw?.items?.map { it.src }?.toMutableList()
                             ?: arrayListOf()
-
+                    val name = bilibiliItem.modules.moduleAuthor.name
                     val text = bilibiliItem.modules.moduleDynamic.desc?.text ?: run {
                         val text = MsgUtils.builder()
 
                         bilibiliItem.modules.moduleDynamic.major?.archive?.let { archive ->
-                            text.text(archive.title)
-                            imageUrls.add(archive.cover)
+                            text.text(
+                                MsgUtils.builder().text(archive.title).img(archive.cover).text("\n${archive.jumpUrl}")
+                                    .build()
+                            )
                             bvid = archive.bvid
                         } ?: run {
                             "暂时无法获取的数据类型"
@@ -38,7 +40,7 @@ class BilibiliMessageCollect(
                         text.build()
                     }
                     val idStr = bilibiliItem.idStr
-                    articleList.add(BilibiliArticle(idStr, text, imageUrls, isTopping, bvid))
+                    articleList.add(BilibiliArticle(idStr, name, text, imageUrls, isTopping, bvid))
                 }
             }
         }
