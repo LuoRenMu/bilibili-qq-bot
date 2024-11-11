@@ -22,11 +22,14 @@ json文件不支持注释
   "bilibili_video_delete_timing": 3,  //定时删除时间、以小时为单位
   "bilibili_video_length_limit": 5, //禁止监听超过的视频长度、以分钟为单位
   "bot_owner": 0, // 机器人主人QQ
+  "text_forward":300, // 文本超过300将分块转发(较低将出现文本错误)
+  "image_forward":3, // 超过该数量的图片将作为转发发送
   "group_bvid_listen": true, //bvid视频监听总开关
   "listen_list": [  //监听列表、支持监听多个用户 (暂时只支持监听用户动态)
     {
       "live_broadcast": false,  //暂未支持
-      "uid": ""  //监听的b站用户uid
+      "uid": "",  //监听的b站用户uid
+      "group_bilibili_push":[] //该监听只允许推送到的群(banned_group_bilibili_push字段无法对其限制)
     },
     {  
       "live_broadcast": false,  
@@ -38,9 +41,10 @@ json文件不支持注释
 
 
 ### 命令(后期将修改为自定义.)
-
+当前命令为硬编写
 需在setting中设置bot_owner
 
-1. 更新配置文件
+1. 更新配置文件  (私聊机器人,更新setting配置 无需重启)
+2. 最新动态 uid (群聊发送, 推送指定uid的最新动态到该群 常用与测试 受消息链限制 相同的消息不会发送)
 
 本项目由LiteLoaderNTQQ、LLonebot 、shiro 强力驱动
