@@ -1,67 +1,91 @@
-name: Build and Release JAR
+name: Release jar and Docker image
 
 on:
   push:
+    branches:
+      - main
+      - dev
     tags:
       - 'v*'
+  pull_request:
+    branches: [ "main" ]
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-and-release:
+  build-and-push-image:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2
+        uses: actions/checkout@v4
         with:
-          java-version: '17'
-          distribution: 'adopt'
+          ref: ${{ github.head_ref }}   # checkout the correct branch name
+          fetch-depth: 0                # fetch the whole repo history
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v2
+      - name: Git Version
+        id: version
+        uses: codacy/git-version@2.7.1
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/settings.gradle*', '**/settings.gradle.kts') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          release-branch: main
+          dev-branch: dev
+          major-identifier: "breaking:"
+          minor-identifier: "feature:"
 
+      - name: Get Tag Version
+        id: get_version
+        run: |
+          export TRUNCATED_GITHUB_SHA=$(echo ${{ github.sha }} | cut -c1-7);
+          echo "VERSION_TAG=${GITHUB_REF/refs\/heads\//}-${TRUNCATED_GITHUB_SHA}" >> $GITHUB_ENV
 
-      - name: Set up Gradle
-        uses: gradle/gradle-build-action@v2
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
 
       - name: Remove aliyun maven mirror
         run: |
           sed -i '/maven(url/d' build.gradle.kts
 
-      - name: Get Gradle version
-        id: get_gradle_version
-        run: echo ::set-output name=version::$(./gradlew -q printVersion)
+      - name: Set Java version
+        run: |
+          sed -i "s/^version.*$/version = \"${{ steps.version.outputs.version }}\"/g" build.gradle.kts
 
-      - name: Build with Gradle
-        run: ./gradlew build
+      - name: Build jar
+        run: ./gradlew bootJar
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload jar
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
+          name: jar
+          path: ./build/libs/*
 
-      - name: Upload JAR as Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/libs/bilibili-Lomu-${{ steps.get_gradle_version.outputs.version }}.jar
-          asset_name: bilibili-Lomu-${{ steps.get_gradle_version.outputs.version }}.jar
-          asset_content_type: application/java-archive
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=raw,value=dev,enable=${{ github.ref == format('refs/heads/{0}', 'dev') }}
+            type=raw,value={{branch}}-{{sha}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
