@@ -87,7 +87,7 @@ json文件不支持注释
 ##### customize_command
 与command相同 自定义设置command_id 主要用于自定义机器人回复     
 详细参考自动生成的配置文件演示 该配置表示输入ping询问机器人是否在线     
-command_id如果与command中的command_id相同 相当于该指令的别名
+command_id如果与command中的command_id相同 相当于该指令的别名         
 
 
 本项目由LiteLoaderNTQQ、LLonebot 、shiro 强力驱动
