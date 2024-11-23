@@ -33,18 +33,61 @@ json文件不支持注释
     },
     {  
       "live_broadcast": false,  
-      "uid": ""  
+      "uid": "",
+      "group_bilibili_push":[]
     }
   ]
 }
 ````
 
 
-### 命令(后期将修改为自定义.)
-当前命令为硬编写
-需在setting中设置bot_owner
+### 命令及权限
 
-1. 更新配置文件  (私聊机器人,更新setting配置 无需重启)
-2. 最新动态 uid (群聊发送, 推送指定uid的最新动态到该群 常用与测试 受消息链限制 相同的消息不会发送)
+在了解命令之前你需要了解机器人
+#### 权限
+````kotlin
+    // 机器人权限 (数字越大权限越大) 
+    OWNER("owner", 10)  // bot所有者(配置文件手动添加)
+    ADMIN("admin", 5)   // bot管理员(待支持)
+    GroupOwner("group_owner", 4) // 群主
+    GroupAdmin("group_admin", 3) // 群管理员
+    Member("member", 0) // 群成员
+````
+#### 命令
+* command_id -> 机器人的命令id为唯一标识符 确保程序能够正确识别该指令(正常情况你不应该去修改它)    
+* return_message -> 表示权限不足时机器人返回的消息
+* role   -> 当用户大于等于该权限时执行 owner > admin > group_owner > group_admin > member
+* command -> 自定义命令以包含型正则表达式进行匹配
+
+##### command
+1. ^(1+1)$  这样的命令表示1+1开头并结尾 (如果没有进行头尾限制^和\$符合那么在任何包含1+1的情况下都会执行命令)     
+2. ^(1+1)$   ->  1+1(命令执行)      
+3. ^(1+1)$   ->  我猜1+1=2(命令不执行)      
+4. 1+1   ->  我猜1+1=2(命令执行)     
+!!!错误的设置将对群造成污染任何语句都可能执行命令      
+````json
+{
+	"command_list":[
+		{
+			"command":"^(更新配置文件)$", 
+			"command_id":"refresh_config",
+			"return_message":"权限不允许",
+			"role":"group_admin"
+		},
+		{
+			"command":"^(获取最新动态)$",
+			"command_id":"get_last_article",
+			"return_message":"权限不允许",
+			"role":"group_admin"
+		}
+	]
+}
+````
+
+##### customize_command
+与command相同 自定义设置command_id 主要用于自定义机器人回复     
+详细参考自动生成的配置文件演示 该配置表示输入ping询问机器人是否在线     
+command_id如果与command中的command_id相同 相当于该指令的别名
+
 
 本项目由LiteLoaderNTQQ、LLonebot 、shiro 强力驱动

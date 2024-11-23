@@ -52,8 +52,8 @@ class BilibiliEventListen(
                 } ?: run {
                     bot.sendGroupMsgLimit(groupId, "视频下载失败")
                 }
-
-
+            } ?: run {
+                bot.sendGroupMsgLimit(groupId, "获取视频信息视频(视频不存在)")
             }
         }
 

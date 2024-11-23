@@ -1,9 +1,10 @@
 package cn.luorenmu.listen
 
-import cn.luorenmu.action.listenProcess.BilibiliMessageCollect
-import cn.luorenmu.action.listenProcess.BilibiliRequestData
+import cn.luorenmu.command.CommandAllocator
+import cn.luorenmu.command.entity.BotRole
+import cn.luorenmu.command.entity.CommandSender
+import cn.luorenmu.common.utils.COMMAND
 import cn.luorenmu.common.utils.SETTING
-import cn.luorenmu.common.utils.loadSetting
 import com.mikuac.shiro.annotation.PrivateMessageHandler
 import com.mikuac.shiro.annotation.PrivateMsgDeleteNoticeHandler
 import com.mikuac.shiro.annotation.common.Shiro
@@ -20,20 +21,24 @@ import org.springframework.stereotype.Component
 @Component
 @Shiro
 class PrivateEvenListen(
-    val bilibiliMessageCollect: BilibiliMessageCollect,
-    val bilibiliRequestData: BilibiliRequestData,
+    val commandAllocator: CommandAllocator,
 ) {
 
     @PrivateMessageHandler
     fun privateMessageHandler(bot: Bot, privateMessage: PrivateMessageEvent) {
-        if (privateMessage.privateSender.userId == SETTING.botOwner) {
-            when (privateMessage.message) {
-                "更新配置文件" -> {
-                    loadSetting()
-                    bot.sendPrivateMsg(privateMessage.userId, "success", false)
-                    return
-                }
-            }
+        val sender = privateMessage.privateSender
+        val role = if (SETTING.botOwner == sender.userId) BotRole.OWNER else BotRole.Member
+        log.info { COMMAND }
+        commandAllocator.allocator(
+            CommandSender(
+                privateMessage.userId,
+                sender.nickname,
+                sender.userId,
+                role,
+                privateMessage.message
+            )
+        )?.let {
+            bot.sendPrivateMsg(sender.userId, it, false)
         }
     }
 

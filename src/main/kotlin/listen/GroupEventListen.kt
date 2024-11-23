@@ -3,7 +3,12 @@ package cn.luorenmu.listen
 import cn.luorenmu.action.listenProcess.BilibiliEventListen
 import cn.luorenmu.action.listenProcess.BilibiliMessageCollect
 import cn.luorenmu.action.listenProcess.BilibiliRequestData
+import cn.luorenmu.command.CommandAllocator
+import cn.luorenmu.command.CommandProcess
+import cn.luorenmu.command.entity.BotRole
+import cn.luorenmu.command.entity.CommandSender
 import cn.luorenmu.common.extensions.sendGroupBilibiliarticle
+import cn.luorenmu.common.extensions.sendGroupMsgLimit
 import cn.luorenmu.common.utils.SETTING
 import com.mikuac.shiro.annotation.GroupMessageHandler
 import com.mikuac.shiro.annotation.common.Shiro
@@ -23,28 +28,28 @@ val log = KotlinLogging.logger { }
 @Component
 @Shiro
 class GroupEventListen(
-    private val bilibiliMessageCollect: BilibiliMessageCollect,
-    private val bilibiliEventListen: BilibiliEventListen,
-    private val bilibiliRequestData: BilibiliRequestData,
+    private val commandAllocator: CommandAllocator,
+    private val bilibiliEventListen: BilibiliEventListen
 ) {
     @GroupMessageHandler
     fun groupMsgListen(bot: Bot, groupMessageEvent: GroupMessageEvent) {
         val groupId = groupMessageEvent.groupId
         val message = groupMessageEvent.message
+
         if (SETTING.groupBvidListen) {
             if (!SETTING.bannedGroupBvidListen.contains(groupId)) {
                 bilibiliEventListen.process(bot, groupId, message)
             }
         }
+        val sender = groupMessageEvent.sender
+        val role = when(sender.role){
+            "admin" -> BotRole.GroupAdmin
+            "owner" -> BotRole.GroupOwner
+            else -> BotRole.Member
 
-        if (groupMessageEvent.message.startsWith("最新动态")) {
-            val uid = groupMessageEvent.message.split(" ")[1]
-            val articleMessageCollect = bilibiliMessageCollect.articleMessageCollect(uid, 5)
-            bot.sendGroupBilibiliarticle(
-                articleMessageCollect.maxBy { it.id.toLong() },
-                bilibiliRequestData,
-                groupId
-            )
+        }
+        commandAllocator.allocator(CommandSender(groupId,sender.nickname,sender.userId,role,message,false))?.let {
+            bot.sendGroupMsgLimit(groupId,it)
         }
     }
 }

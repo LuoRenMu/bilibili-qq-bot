@@ -8,7 +8,7 @@ plugins {
 
 
 group = "cn.luorenmu"
-version = "0.1.2"
+version = "0.2.0"
 
 repositories {
     maven(url = "https://maven.aliyun.com/repository/public/")

@@ -1,0 +1,14 @@
+{
+  "command_list": [
+    {
+      "command_id": "refresh_config",
+      "command": "^(更新配置文件)$",
+      "return_message": "权限不允许"
+    },
+    {
+      "command_id": "get_last_article",
+      "command": "^(获取最新动态)$",
+      "return_message": "权限不允许"
+    }
+  ]
+}

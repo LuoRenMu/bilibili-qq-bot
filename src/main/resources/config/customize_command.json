@@ -1,0 +1,10 @@
+{
+  "command_list": [
+    {
+      "command_id": "ping",
+      "command": "^(ping)$",
+      "return_message": "我在哦~",
+      "role": "member"
+    }
+  ]
+}
