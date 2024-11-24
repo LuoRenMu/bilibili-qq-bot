@@ -12,6 +12,7 @@ data class BilibiliCacheUtils(
     var uid: String,
     var lastArticle: Long? = null,
     var lastVideo: String? = null,
+    var onLive : Boolean? = false
 ) {
     private val jsonPath = "${ReadWriteFile.CURRENT_PATH}/cache/$uid.json"
 

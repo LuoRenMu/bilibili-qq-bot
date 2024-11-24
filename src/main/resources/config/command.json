@@ -7,7 +7,7 @@
     },
     {
       "command_id": "get_last_article",
-      "command": "^(获取最新动态)$",
+      "command": "^(获取最新动态)",
       "return_message": "权限不允许"
     }
   ]

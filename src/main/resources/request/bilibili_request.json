@@ -48,5 +48,15 @@
         "content": "buvid3=123;buvid4=123"
       }
     ]
+  },
+  "uid_get_live_room": {
+    "url": "https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld?mid=${uid}",
+    "method": "GET",
+    "headers": [
+      {
+        "name": "User-Agent",
+        "content": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+      }
+    ]
   }
 }

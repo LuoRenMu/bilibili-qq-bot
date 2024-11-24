@@ -22,11 +22,4 @@ class System(
         return "running success "
     }
 
-    @RequestMapping("/push")
-    fun push(): String {
-        bilibiliMessagePush.timingPushArticle()
-        return "success"
-    }
-
-
 }

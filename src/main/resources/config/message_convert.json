@@ -11,6 +11,10 @@
     {
       "id": "forward_image",
       "format_messages": "${origin_image}"
+    },
+    {
+      "id": "live_push",
+      "format_messages": "${up_name} 正在直播中${live_title}  ${live_cover}"
     }
   ]
 }

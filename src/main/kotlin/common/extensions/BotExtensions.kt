@@ -148,6 +148,11 @@ fun Bot.sendGroupListBilibiliarticle(
     }
 }
 
+fun Bot.sendGroupMessageConvert(groupId: Long, id: String, map: MutableMap<String, String>): Boolean {
+    val build = MESSAGE_CONVERT.replace(id, map).build()
+    return this.sendGroupMsgLimit(groupId, build)
+}
+
 
 fun Bot.sendBilibiliArticle(
     lastArticle: BilibiliArticle,

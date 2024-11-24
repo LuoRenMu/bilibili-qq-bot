@@ -105,8 +105,17 @@ class BilibiliRequestData {
         requestController.replaceUrl("uid", uid)
         val resp = requestController.request()
         resp?.let {
-            val result = it.body()
-            return result.to<BilibiliSpace>()
+            return it.body().to<BilibiliSpace>()
+        }
+        return null
+    }
+
+    fun uidLiveRoom(uid: String): BilibiliLiveRoomInfo? {
+        val requestController = RequestController("bilibili_request.uid_get_live_room")
+        requestController.replaceUrl("uid", uid)
+        val resp = requestController.request()
+        resp?.let {
+            return it.body().to<BilibiliLiveRoomInfo>()
         }
         return null
     }
