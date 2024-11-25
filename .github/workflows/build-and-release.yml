@@ -13,8 +13,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-
-
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
@@ -31,26 +29,25 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-
-
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v2
 
       - name: Get Gradle version
         id: get_gradle_version
-        run: echo ::set-output name=version::$(./gradlew -q printVersion)
+        run: echo "version=$(./gradlew -q printVersion)" >> $GITHUB_OUTPUT
 
       - name: Set executable permissions for gradlew
         run: chmod +x ./gradlew
-
 
       - name: Remove aliyun maven mirror
         run: |
           sed -i '/maven(url/d' build.gradle.kts
 
-
       - name: Build with Gradle
         run: ./gradlew build
+
+      - name: List files in build/libs
+        run: ls -R build/libs
 
       - name: Create Release
         id: create_release
