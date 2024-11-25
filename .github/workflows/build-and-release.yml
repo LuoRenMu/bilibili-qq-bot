@@ -68,6 +68,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/libs/bilibili-Lomu.jar
-          asset_name: bilibili-Lomu.jar
+          asset_path: build/libs/bilibili-Lomu-1.0.0.jar
+          asset_name: bilibili-Lomu-1.0.0.jar
           asset_content_type: application/java-archive
