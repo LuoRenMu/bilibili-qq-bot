@@ -22,7 +22,7 @@ data class CommandInfo(
 
 enum class CommandId(val id: String) {
     REFRESH_CONFIG("refresh_config"),
-    GET_LAST_ARTICLE("get_last_article"),
+    EXECUTE_BILIBILI_TIMING_TASK("execute_bilibili_timing_task"),
 }
 
 

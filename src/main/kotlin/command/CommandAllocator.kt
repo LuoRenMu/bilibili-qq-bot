@@ -42,13 +42,13 @@ class CommandAllocator(
                     return@let commandProcess.refreshConfig()
                 }
 
-                CommandId.GET_LAST_ARTICLE.id -> {
-                    return@let commandProcess.refreshConfig()
+                CommandId.EXECUTE_BILIBILI_TIMING_TASK.id -> {
+                    return@let commandProcess.executeBilibiliTimingTask()
 
                 }
 
                 else -> {
-                    command.returnMessage
+                    COMMAND.commandList.filter { commandMatcher(it.command, sender) }.random().returnMessage
                 }
             }
         }

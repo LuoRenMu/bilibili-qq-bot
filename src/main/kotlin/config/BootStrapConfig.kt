@@ -6,6 +6,9 @@ import cn.luorenmu.action.listenProcess.BilibiliMessageCollect
 import cn.luorenmu.common.utils.*
 import cn.luorenmu.file.InitializeFile
 import cn.luorenmu.file.ReadWriteFile
+import com.alibaba.fastjson2.JSON
+import com.alibaba.fastjson2.JSONObject
+import com.alibaba.fastjson2.to
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ApplicationListener
@@ -24,9 +27,10 @@ val log = KotlinLogging.logger { }
 @Configuration
 class BotStrapConfig(
     @Suppress("SpringJavaInjectionPointsAutowiringInspection")
-    val bilibiliMessageCollect: BilibiliMessageCollect
-): ApplicationListener<ApplicationReadyEvent> {
+    val bilibiliMessageCollect: BilibiliMessageCollect,
+) : ApplicationListener<ApplicationReadyEvent> {
 
+    private val log = KotlinLogging.logger { }
 
     private val dirs = listOf(
         "image/", "request/", "video/bilibili/"
@@ -37,29 +41,43 @@ class BotStrapConfig(
         "bilibili_request" to "request/bilibili_request.json",
     )
 
-    init {
+
+    override fun onApplicationEvent(event: ApplicationReadyEvent) {
+        log.info { "LoMu Bot running successfully!" }
+
         InitializeFile.run(MainApplication::class.java)
         for (dir in dirs) {
             ReadWriteFile.createCurrentDirs(dir)
         }
 
-        /**
-         * 文件已存在则跳过
-         */
-        for (file in resourcesRequestJson) {
-            val stream = ResourceUtil.getResource(file.value).openStream()
-            ReadWriteFile.writeCurrentStreamFile(file.value, stream)
-            val json = ReadWriteFile.readCurrentFileJson(file.value)
-            JsonObjectUtils.putRequestJson(file.key, json)
+
+        for (filePath in resourcesRequestJson) {
+            var initJsonObj =
+                ResourceUtil.getResource(filePath.value).openStream().bufferedReader().readText().to<JSONObject>()
+            val file = File(ReadWriteFile.CURRENT_PATH + filePath.value)
+            if (file.exists()) {
+                var fix = false
+                val jsonObj = ReadWriteFile.readCurrentFileJson(filePath.value).to<JSONObject>()
+                for (mutableEntry in initJsonObj) {
+                    if (!jsonObj.containsKey(mutableEntry.key)) {
+                        log.warn { "${filePath.value}-> ${mutableEntry.key} not exists!  try fix" }
+                        fix = true
+                        jsonObj[mutableEntry.key] = mutableEntry.value
+                        log.info { "try success" }
+                    }
+                }
+                if (fix) {
+                    file.delete()
+                    ReadWriteFile.entityWriteFileToCurrentDir(filePath.value, jsonObj)
+                }
+
+            }else{
+                ReadWriteFile.entityWriteFileToCurrentDir(filePath.value, initJsonObj)
+                initJsonObj = ReadWriteFile.readCurrentFileJson(filePath.value).to<JSONObject>()
+            }
+
+            JsonObjectUtils.putRequestJson(filePath.key, initJsonObj)
         }
-
-        initMessageConvert()
-
-    }
-
-
-    override fun onApplicationEvent(event: ApplicationReadyEvent) {
-        log.info { "LoMu Bot running successfully!" }
 
 
         // 如果视频不是持久化保存 则在启动时删除所有
@@ -77,7 +95,7 @@ class BotStrapConfig(
 
         initSetting()
         initCommandFile()
-
+        initMessageConvert()
 
         SETTING.listenList.forEach {
             if (it.uid.isNotBlank() && !BilibiliCacheUtils.exists(it.uid)) {
@@ -88,7 +106,6 @@ class BotStrapConfig(
                 TimeUnit.SECONDS.sleep(3)
             }
         }
-
 
 
     }

@@ -25,6 +25,8 @@ data class LoMuBotSetting(
     var bannedGroupBilibiliPush: MutableList<Long> = mutableListOf(0L),
     @JSONField(name = "listen_list")
     var listenList: MutableList<ListenSetting> = mutableListOf(ListenSetting("")),
+    @JSONField(name = "leave_group_owner_not_exists")
+    var leaveGroupOwner: Boolean = false,
 )
 
 data class ListenSetting(

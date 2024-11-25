@@ -31,13 +31,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Set executable permissions for gradlew
-        run: chmod +x ./gradlew
-
-
-      - name: Remove aliyun maven mirror
-        run: |
-          sed -i '/maven(url/d' build.gradle.kts
 
 
       - name: Set up Gradle
@@ -46,6 +39,15 @@ jobs:
       - name: Get Gradle version
         id: get_gradle_version
         run: echo ::set-output name=version::$(./gradlew -q printVersion)
+
+      - name: Set executable permissions for gradlew
+        run: chmod +x ./gradlew
+
+
+      - name: Remove aliyun maven mirror
+        run: |
+          sed -i '/maven(url/d' build.gradle.kts
+
 
       - name: Build with Gradle
         run: ./gradlew build
