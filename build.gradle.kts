@@ -8,7 +8,7 @@ plugins {
 
 
 group = "cn.luorenmu"
-version = "0.2.3"
+version = "0.2.41"
 
 repositories {
     maven(url = "https://maven.aliyun.com/repository/public/")
@@ -16,7 +16,11 @@ repositories {
 
     mavenCentral()
 }
-
+tasks.register("printVersion") {
+    doLast {
+        println(project.version)
+    }
+}
 tasks.withType<Test> {
     useJUnitPlatform()
 }
