@@ -45,14 +45,12 @@ jobs:
       - name: List files in build/libs
         run: ls -R build/libs
 
-
       - name: Get Gradle version
         id: get_gradle_version
         run: echo "version=$(./gradlew -q printVersion)" >> $GITHUB_OUTPUT
 
       - name: Debug Gradle version
         run: echo "Gradle version: ${{ steps.get_gradle_version.outputs.version }}"
-
 
       - name: Create Release
         id: create_release
