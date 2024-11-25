@@ -32,10 +32,6 @@ jobs:
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v2
 
-      - name: Get Gradle version
-        id: get_gradle_version
-        run: echo "version=$(./gradlew -q printVersion)" >> $GITHUB_OUTPUT
-
       - name: Set executable permissions for gradlew
         run: chmod +x ./gradlew
 
@@ -49,6 +45,15 @@ jobs:
       - name: List files in build/libs
         run: ls -R build/libs
 
+
+      - name: Get Gradle version
+        id: get_gradle_version
+        run: echo "version=$(./gradlew -q printVersion)" >> $GITHUB_OUTPUT
+
+      - name: Debug Gradle version
+        run: echo "Gradle version: ${{ steps.get_gradle_version.outputs.version }}"
+
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -60,13 +65,13 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload JAR as Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/libs/bilibili-Lomu-${{ steps.get_gradle_version.outputs.version }}.jar
-          asset_name: bilibili-Lomu-${{ steps.get_gradle_version.outputs.version }}.jar
-          asset_content_type: application/java-archive
+        - name: Upload JAR as Release Asset
+          id: upload-release-asset
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: build/libs/bilibili-Lomu-${{ steps.get_gradle_version.outputs.version }}.jar
+            asset_name: bilibili-Lomu-${{ steps.get_gradle_version.outputs.version }}.jar
+            asset_content_type: application/java-archive
