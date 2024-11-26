@@ -44,11 +44,10 @@ class CommandAllocator(
 
                 CommandId.EXECUTE_BILIBILI_TIMING_TASK.id -> {
                     return@let commandProcess.executeBilibiliTimingTask()
-
                 }
 
                 else -> {
-                    COMMAND.commandList.filter { commandMatcher(it.command, sender) }.random().returnMessage
+                    COMMAND.commandList.filter { command.commandId == it.commandId }.random().returnMessage
                 }
             }
         }
