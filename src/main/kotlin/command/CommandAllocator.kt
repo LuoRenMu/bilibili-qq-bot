@@ -35,6 +35,9 @@ class CommandAllocator(
     fun allocator(sender: CommandSender): String? {
         return COMMAND.commandList.firstOrNull { commandMatcher(it.command, sender) }?.let { command ->
             if (!rolePermissions(command.role, sender.role)) {
+                if (command.returnMessage.isBlank()){
+                    return null
+                }
                 command.returnMessage
             }
             return when (command.commandId) {
