@@ -34,22 +34,34 @@ class CommandAllocator(
 
     fun allocator(sender: CommandSender): String? {
         return COMMAND.commandList.firstOrNull { commandMatcher(it.command, sender) }?.let { command ->
-            if (!rolePermissions(command.role, sender.role)) {
-                if (command.returnMessage.isBlank()){
-                    return null
-                }
-                command.returnMessage
-            }
             return when (command.commandId) {
                 CommandId.REFRESH_CONFIG.id -> {
+                    if (!rolePermissions(command.role, sender.role)) {
+                        if (command.returnMessage.isBlank()) {
+                            return null
+                        }
+                        return@let command.returnMessage
+                    }
                     return@let commandProcess.refreshConfig()
                 }
 
                 CommandId.EXECUTE_BILIBILI_TIMING_TASK.id -> {
+                    if (!rolePermissions(command.role, sender.role)) {
+                        if (command.returnMessage.isBlank()) {
+                            return null
+                        }
+                        return@let command.returnMessage
+                    }
                     return@let commandProcess.executeBilibiliTimingTask()
                 }
 
                 else -> {
+                    if (!rolePermissions(command.role, sender.role)) {
+                        if (command.returnMessage.isBlank()) {
+                            return null
+                        }
+                        return@let command.commandId
+                    }
                     COMMAND.commandList.filter { command.commandId == it.commandId }.random().returnMessage
                 }
             }
