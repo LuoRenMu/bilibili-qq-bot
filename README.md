@@ -84,10 +84,25 @@ json文件不支持注释
 }
 ````
 
-##### customize_command
-与command相同 自定义设置command_id 主要用于自定义机器人回复     
-详细参考自动生成的配置文件演示 该配置表示输入ping询问机器人是否在线     
-command_id如果与command中的command_id相同 相当于该指令的别名      
+##### 自定义回复
+通过配置文件customize_command.json
+````json
+{
+	"customize_command_list":[
+		{
+			"command":"^(ping)$", //命令
+			"group_list":[],    // 该命令只在该群生效
+			"permissions_message":"权限不允许",  //权限不足回复内容 如果字符串为空"permissions_message":"" 表示不回复
+			"return_message":"我在哦~", // 成功执行
+			"role":"member",  //权限
+			"sender_list":[], // 指定发送者QQ 只有该用户能够触发 
+			"probability": 1.0  // 触发概率 0.0 ~ 1.0
+		}
+	]
+}
+````
+
+
 自定义发送音频、视频、图片 [OneBotCQ码](https://283375.github.io/onebot_v11_vitepress/message/segment.html#%E7%BA%AF%E6%96%87%E6%9C%AC)
 
 

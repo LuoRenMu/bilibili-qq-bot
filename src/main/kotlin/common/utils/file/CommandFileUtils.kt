@@ -1,4 +1,4 @@
-package cn.luorenmu.common.utils
+package cn.luorenmu.common.utils.file
 
 import cn.hutool.core.io.resource.ResourceUtil
 import cn.luorenmu.command.entity.Command
@@ -14,12 +14,11 @@ import java.io.File
 private val log = KotlinLogging.logger {}
 var COMMAND: Command = Command()
 val COMMAND_PATH = ReadWriteFile.CURRENT_PATH + "command.json"
-val CUSTOMIZER_COMMAND_PATH = ReadWriteFile.CURRENT_PATH + "customize_command.json"
+
 
 @Synchronized
 fun initCommandFile(command: Command? = null): Boolean {
     var returnBool = false
-
     command?.let {
         COMMAND = it
         ReadWriteFile.entityWriteFile(COMMAND_PATH, COMMAND)
@@ -33,12 +32,6 @@ fun initCommandFile(command: Command? = null): Boolean {
         returnBool = true
     }
 
-    if (!File(CUSTOMIZER_COMMAND_PATH).exists()) {
-        val customizeCommand =
-            ResourceUtil.getResource("config/customize_command.json").openStream().bufferedReader().readText()
-                .to<Command>()
-        ReadWriteFile.entityWriteFile(CUSTOMIZER_COMMAND_PATH, customizeCommand)
-    }
 
     loadCommandFile()
     fixCommandFile()
@@ -66,9 +59,6 @@ fun fixCommandFile() {
 @Synchronized
 fun loadCommandFile(): Command {
     val command = ReadWriteFile.readFileJson(COMMAND_PATH).to<Command>()
-    val customizeCommand = ReadWriteFile.readFileJson(CUSTOMIZER_COMMAND_PATH).to<Command>()
-    command.commandList.addAll(customizeCommand.commandList)
-
     COMMAND = command
     return COMMAND
 }

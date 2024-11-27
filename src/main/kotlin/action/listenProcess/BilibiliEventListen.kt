@@ -2,7 +2,7 @@ package cn.luorenmu.action.listenProcess
 
 import cn.luorenmu.common.extensions.sendGroupMsgLimit
 import cn.luorenmu.common.utils.MatcherData
-import cn.luorenmu.common.utils.SETTING
+import cn.luorenmu.common.utils.file.SETTING
 import cn.luorenmu.entiy.Request
 import cn.luorenmu.request.RequestController
 import com.mikuac.shiro.common.utils.MsgUtils

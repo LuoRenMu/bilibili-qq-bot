@@ -7,7 +7,7 @@ import com.alibaba.fastjson2.annotation.JSONField
  * Date 2024.11.16 14:09
  */
 data class Command(
-    @JSONField(name    = "command_list")
+    @JSONField(name = "command_list")
     val commandList: MutableList<CommandInfo> = mutableListOf(),
 )
 
@@ -16,9 +16,17 @@ data class CommandInfo(
     var commandId: String = "",
     var command: String = "",
     @JSONField(name = "return_message")
-    var returnMessage: String = "",
+    var returnMessageTemp: String = "",
     var role: String = "group_admin",
-)
+) {
+    val returnMessage: String?
+        get() {
+            if (returnMessageTemp.isBlank()) {
+                return null
+            }
+            return returnMessageTemp
+        }
+}
 
 enum class CommandId(val id: String) {
     REFRESH_CONFIG("refresh_config"),

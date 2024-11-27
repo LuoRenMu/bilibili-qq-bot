@@ -10,9 +10,9 @@ data class LoMuBotSetting(
     @JSONField(name = "bot_owner")
     var botOwner: Long = 0L,
     @JSONField(name = "image_forward")
-    var imageForward : Int = 3,
+    var imageForward: Int = 3,
     @JSONField(name = "text_forward")
-    var textForward : Int = 500,
+    var textForward: Int = 500,
     @JSONField(name = "group_bvid_listen")
     var groupBvidListen: Boolean = true,
     @JSONField(name = "bilibili_video_delete_timing")
@@ -27,6 +27,8 @@ data class LoMuBotSetting(
     var listenList: MutableList<ListenSetting> = mutableListOf(ListenSetting("")),
     @JSONField(name = "leave_group_owner_not_exists")
     var leaveGroupOwner: Boolean = false,
+    @JSONField(name = "ignore_private_messages")
+    var ignorePrivateMessages: Boolean = true,
 )
 
 data class ListenSetting(

@@ -2,10 +2,10 @@ package cn.luorenmu.common.extensions
 
 import cn.luorenmu.action.listenProcess.BilibiliRequestData
 import cn.luorenmu.action.listenProcess.entity.BilibiliArticle
-import cn.luorenmu.common.utils.MESSAGE_CONVERT
-import cn.luorenmu.common.utils.SETTING
+import cn.luorenmu.common.utils.file.MESSAGE_CONVERT
+import cn.luorenmu.common.utils.file.SETTING
 import cn.luorenmu.config.entity.MessageConvert
-import cn.luorenmu.config.entity.groups
+import cn.luorenmu.config.entity.QQ_GROUPS
 import cn.luorenmu.entity.RecentlyMessageQueue
 import cn.luorenmu.entity.SelfSendMsg
 import com.mikuac.shiro.common.utils.MsgUtils
@@ -210,7 +210,7 @@ fun Bot.sendBilibiliArticle(
 }
 
 fun Bot.groupList(retry: Int = 0): List<Long> {
-    if (retry > 5) return groups
+    if (retry > 5) return QQ_GROUPS
     var groupList: List<Long>
     try {
         groupList = this.groupList.data.map { it.groupId }.toList()
@@ -218,7 +218,7 @@ fun Bot.groupList(retry: Int = 0): List<Long> {
         cn.luorenmu.task.log.warn { "get group list failed ,retry get" }
         groupList = groupList(retry + 1)
     }
-    groups = groupList
+    QQ_GROUPS = groupList
     return groupList
 }
 

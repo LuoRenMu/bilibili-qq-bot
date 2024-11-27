@@ -1,9 +1,11 @@
 {
-  "command_list": [
+  "customize_command_list": [
     {
-      "command_id": "ping",
+      "permissions_message": "权限不允许",
       "command": "^(ping)$",
       "return_message": "我在哦~",
+      "sender_list": [],
+      "group_list": [],
       "role": "member"
     }
   ]

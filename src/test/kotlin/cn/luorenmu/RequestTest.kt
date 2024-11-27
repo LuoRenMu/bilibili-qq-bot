@@ -1,11 +1,13 @@
 package cn.luorenmu
 
 import cn.luorenmu.action.listenProcess.BilibiliMessageCollect
-import cn.luorenmu.action.listenProcess.BilibiliRequestData
-import cn.luorenmu.common.extensions.sendGroupBilibiliarticle
-import com.mikuac.shiro.common.utils.MsgUtils
-import com.mikuac.shiro.common.utils.ShiroUtils
+import cn.luorenmu.command.CustomizeCommandAllocator
+import cn.luorenmu.command.entity.BotRole
+import cn.luorenmu.command.entity.CommandSender
+import cn.luorenmu.command.entity.CustomizeCommandInfo
+import cn.luorenmu.common.utils.file.CUSTOMIZE_COMMAND
 import com.mikuac.shiro.core.BotContainer
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -15,14 +17,19 @@ import org.springframework.boot.test.context.SpringBootTest
  * Date 2024.11.02 18:50
  */
 
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class RequestTest(
     @Autowired val bilibiliMessageCollect: BilibiliMessageCollect,
     @Autowired val botContainer: BotContainer,
-    @Autowired val bilibiliRequestData: BilibiliRequestData,
+    @Autowired val customizeCommandAllocator: CustomizeCommandAllocator,
 ) {
+    val log = KotlinLogging.logger {}
     @Test
     fun test() {
-
+       val commandSender = CommandSender(646708986, "123", 2842775752L, BotRole.OWNER, "test", false)
+        CUSTOMIZE_COMMAND.customizeCommandList.add(CustomizeCommandInfo("权限不足","^(test)$", returnMessageTemp = "执行成功", groupList = mutableListOf(646708986), role = "owner", probability = 0.3))
+        val allocator = customizeCommandAllocator.allocator(commandSender)
+        log.info { "allocator: $allocator" }
     }
 }

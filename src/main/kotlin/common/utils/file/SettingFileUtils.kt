@@ -1,4 +1,4 @@
-package cn.luorenmu.common.utils
+package cn.luorenmu.common.utils.file
 
 import cn.luorenmu.config.entity.LoMuBotSetting
 import cn.luorenmu.file.ReadWriteFile

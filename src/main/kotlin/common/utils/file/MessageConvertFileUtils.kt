@@ -1,4 +1,4 @@
-package cn.luorenmu.common.utils
+package cn.luorenmu.common.utils.file
 
 import cn.hutool.core.io.resource.ResourceUtil
 import cn.luorenmu.config.entity.MessageConvert

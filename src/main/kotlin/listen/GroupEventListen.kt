@@ -1,15 +1,12 @@
 package cn.luorenmu.listen
 
 import cn.luorenmu.action.listenProcess.BilibiliEventListen
-import cn.luorenmu.action.listenProcess.BilibiliMessageCollect
-import cn.luorenmu.action.listenProcess.BilibiliRequestData
 import cn.luorenmu.command.CommandAllocator
-import cn.luorenmu.command.CommandProcess
+import cn.luorenmu.command.CustomizeCommandAllocator
 import cn.luorenmu.command.entity.BotRole
 import cn.luorenmu.command.entity.CommandSender
-import cn.luorenmu.common.extensions.sendGroupBilibiliarticle
 import cn.luorenmu.common.extensions.sendGroupMsgLimit
-import cn.luorenmu.common.utils.SETTING
+import cn.luorenmu.common.utils.file.SETTING
 import com.mikuac.shiro.annotation.GroupMessageHandler
 import com.mikuac.shiro.annotation.common.Shiro
 import com.mikuac.shiro.core.Bot
@@ -29,7 +26,8 @@ val log = KotlinLogging.logger { }
 @Shiro
 class GroupEventListen(
     private val commandAllocator: CommandAllocator,
-    private val bilibiliEventListen: BilibiliEventListen
+    private val bilibiliEventListen: BilibiliEventListen,
+    private val customizeCommandAllocator: CustomizeCommandAllocator,
 ) {
     @GroupMessageHandler
     fun groupMsgListen(bot: Bot, groupMessageEvent: GroupMessageEvent) {
@@ -42,14 +40,18 @@ class GroupEventListen(
             }
         }
         val sender = groupMessageEvent.sender
-        val role = when(sender.role){
+        val role = when (sender.role) {
             "admin" -> BotRole.GroupAdmin
             "owner" -> BotRole.GroupOwner
             else -> BotRole.Member
 
         }
-        commandAllocator.allocator(CommandSender(groupId,sender.nickname,sender.userId,role,message,false))?.let {
-            bot.sendGroupMsgLimit(groupId,it)
+        val commandSender = CommandSender(groupId, sender.nickname, sender.userId, role, message, false)
+        customizeCommandAllocator.allocator(commandSender)?.let {
+            bot.sendGroupMsgLimit(groupId, it)
+        }
+        commandAllocator.allocator(commandSender)?.let {
+            bot.sendGroupMsgLimit(groupId, it)
         }
     }
 }

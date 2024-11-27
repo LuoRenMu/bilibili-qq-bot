@@ -5,4 +5,4 @@ package cn.luorenmu.config.entity
  * Date 2024.11.11 01:01
  */
 
-var groups: List<Long> = listOf()
+var QQ_GROUPS: List<Long> = listOf()

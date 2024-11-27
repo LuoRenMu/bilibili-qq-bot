@@ -3,7 +3,7 @@ package cn.luorenmu.command
 import cn.luorenmu.command.entity.BotRole
 import cn.luorenmu.command.entity.CommandId
 import cn.luorenmu.command.entity.CommandSender
-import cn.luorenmu.common.utils.COMMAND
+import cn.luorenmu.common.utils.file.COMMAND
 import org.springframework.stereotype.Component
 
 /**
@@ -34,35 +34,21 @@ class CommandAllocator(
 
     fun allocator(sender: CommandSender): String? {
         return COMMAND.commandList.firstOrNull { commandMatcher(it.command, sender) }?.let { command ->
+            if (!rolePermissions(command.role, sender.role)) {
+                return command.returnMessage
+            }
             return when (command.commandId) {
                 CommandId.REFRESH_CONFIG.id -> {
-                    if (!rolePermissions(command.role, sender.role)) {
-                        if (command.returnMessage.isBlank()) {
-                            return null
-                        }
-                        return@let command.returnMessage
-                    }
                     return@let commandProcess.refreshConfig()
                 }
 
                 CommandId.EXECUTE_BILIBILI_TIMING_TASK.id -> {
-                    if (!rolePermissions(command.role, sender.role)) {
-                        if (command.returnMessage.isBlank()) {
-                            return null
-                        }
-                        return@let command.returnMessage
-                    }
                     return@let commandProcess.executeBilibiliTimingTask()
                 }
 
                 else -> {
-                    if (!rolePermissions(command.role, sender.role)) {
-                        if (command.returnMessage.isBlank()) {
-                            return null
-                        }
-                        return@let command.commandId
-                    }
-                    COMMAND.commandList.filter { command.commandId == it.commandId }.random().returnMessage
+                    log.warn { "command id error not support id is ${command.commandId}" }
+                    null
                 }
             }
         }

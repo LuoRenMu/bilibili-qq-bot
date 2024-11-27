@@ -1,8 +1,9 @@
 package cn.luorenmu.command
 
-import cn.luorenmu.common.utils.loadCommandFile
-import cn.luorenmu.common.utils.loadMessageConvert
-import cn.luorenmu.common.utils.loadSetting
+import cn.luorenmu.common.utils.file.loadCommandFile
+import cn.luorenmu.common.utils.file.loadCustomizeCommandFile
+import cn.luorenmu.common.utils.file.loadMessageConvert
+import cn.luorenmu.common.utils.file.loadSetting
 import cn.luorenmu.task.BilibiliMessagePush
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
@@ -14,13 +15,14 @@ import org.springframework.stereotype.Component
 val log = KotlinLogging.logger {}
 
 @Component
-class CommandProcess (
-    private val bilibiliMessagePush: BilibiliMessagePush
-){
+class CommandProcess(
+    private val bilibiliMessagePush: BilibiliMessagePush,
+) {
     fun refreshConfig(): String {
         try {
             loadSetting()
             loadCommandFile()
+            loadCustomizeCommandFile()
             loadMessageConvert()
         } catch (e: Exception) {
             log.error { e.stackTraceToString() }
@@ -30,7 +32,7 @@ class CommandProcess (
         return "update config success"
     }
 
-    fun executeBilibiliTimingTask(): String{
+    fun executeBilibiliTimingTask(): String {
         bilibiliMessagePush.timingPush()
         return "execute success"
     }

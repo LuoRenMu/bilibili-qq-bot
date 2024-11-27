@@ -4,9 +4,9 @@ import cn.hutool.core.io.resource.ResourceUtil
 import cn.luorenmu.MainApplication
 import cn.luorenmu.action.listenProcess.BilibiliMessageCollect
 import cn.luorenmu.common.utils.*
+import cn.luorenmu.common.utils.file.*
 import cn.luorenmu.file.InitializeFile
 import cn.luorenmu.file.ReadWriteFile
-import com.alibaba.fastjson2.JSON
 import com.alibaba.fastjson2.JSONObject
 import com.alibaba.fastjson2.to
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -95,6 +95,7 @@ class BotStrapConfig(
 
         initSetting()
         initCommandFile()
+        initCustomizeCommandFile()
         initMessageConvert()
 
         SETTING.listenList.forEach {

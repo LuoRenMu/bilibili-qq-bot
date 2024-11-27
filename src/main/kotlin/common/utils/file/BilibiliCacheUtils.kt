@@ -1,4 +1,4 @@
-package cn.luorenmu.common.utils
+package cn.luorenmu.common.utils.file
 
 import cn.luorenmu.file.ReadWriteFile
 import com.alibaba.fastjson2.to

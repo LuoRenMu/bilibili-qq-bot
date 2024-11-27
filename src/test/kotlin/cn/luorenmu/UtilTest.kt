@@ -1,8 +1,7 @@
 package cn.luorenmu
 
-import cn.luorenmu.common.utils.initCommandFile
+import cn.luorenmu.common.utils.file.initCommandFile
 import cn.luorenmu.file.InitializeFile
-import org.junit.jupiter.api.Test
 
 /**
  * @author LoMu

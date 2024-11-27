@@ -1,7 +1,7 @@
 package cn.luorenmu.action.listenProcess
 
 import cn.luorenmu.action.listenProcess.entity.response.*
-import cn.luorenmu.common.utils.SETTING
+import cn.luorenmu.common.utils.file.SETTING
 import cn.luorenmu.common.utils.getVideoPath
 import cn.luorenmu.entiy.Request
 import cn.luorenmu.file.ReadWriteFile
