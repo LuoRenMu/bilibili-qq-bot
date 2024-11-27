@@ -19,11 +19,7 @@ class CustomizeCommandAllocator {
     }
 
     fun commandMatcher(commandMessage: String, sender: CommandSender): Boolean {
-        if (sender.message.contains(commandMessage.toRegex())) {
-            sender.message = sender.message.replace(commandMessage.toRegex(), "")
-            return true
-        }
-        return false
+        return sender.message.contains(commandMessage.toRegex())
     }
 
 
@@ -69,7 +65,8 @@ class CustomizeCommandAllocator {
             // 角色筛选
             val roleLimit = customizeCommandList.filter { it.senderList.isEmpty() && it.groupList.isEmpty() }
             if (roleLimit.isNotEmpty()) {
-                roleLimit.filter { rolePermissions(it.role, sender.role) }.randomOrNull()?.let {
+                val temp = roleLimit.filter { rolePermissions(it.role, sender.role) }
+                temp.randomOrNull()?.let {
                     return it.returnMessage
                 } ?: run { limitMessage = roleLimit.random().permissionsMessage }
             }
