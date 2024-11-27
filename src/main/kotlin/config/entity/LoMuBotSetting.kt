@@ -29,6 +29,8 @@ data class LoMuBotSetting(
     var leaveGroupOwner: Boolean = false,
     @JSONField(name = "ignore_private_messages")
     var ignorePrivateMessages: Boolean = true,
+    @JSONField(name = "message_limit_list")
+    var messageLimitList: Boolean = true,
 )
 
 data class ListenSetting(

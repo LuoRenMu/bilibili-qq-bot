@@ -29,7 +29,9 @@ data class CustomizeCommandInfo(
         return Random.nextDouble(0.0, 1.0) < probability
     }
 
-    val permissionsMessage: String?
+
+    @JSONField(serialize = false)
+    var permissionsMessage: String? = null
         get() {
             if (permissionsMessageTemp.isBlank()) {
                 return null
@@ -37,7 +39,9 @@ data class CustomizeCommandInfo(
             return permissionsMessageTemp
         }
 
-    val returnMessage: String?
+
+    @JSONField(serialize = false)
+    var returnMessage: String? = null
         get() {
             if (returnMessageTemp.isBlank()) {
                 return null

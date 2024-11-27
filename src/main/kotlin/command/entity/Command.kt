@@ -19,7 +19,8 @@ data class CommandInfo(
     var returnMessageTemp: String = "",
     var role: String = "group_admin",
 ) {
-    val returnMessage: String?
+    @JSONField(serialize = false)
+    var returnMessage: String? = null
         get() {
             if (returnMessageTemp.isBlank()) {
                 return null

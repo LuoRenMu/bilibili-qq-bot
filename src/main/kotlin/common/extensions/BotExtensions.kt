@@ -51,6 +51,10 @@ fun Bot.sendGroupMsg(groupId: Long, message: String): ActionData<MsgId>? {
 }
 
 fun Bot.sendGroupMsgLimit(groupId: Long, message: String): Boolean {
+    if (!SETTING.messageLimitList) {
+        this.sendGroupMsg(groupId, message, false)
+        return true
+    }
     return sendMsgLimit(groupId, message) {
         sendGroupMsg(groupId, message)
     }

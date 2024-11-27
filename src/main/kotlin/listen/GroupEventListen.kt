@@ -40,12 +40,16 @@ class GroupEventListen(
             }
         }
         val sender = groupMessageEvent.sender
-        val role = when (sender.role) {
+        var role = when (sender.role) {
             "admin" -> BotRole.GroupAdmin
             "owner" -> BotRole.GroupOwner
             else -> BotRole.Member
-
         }
+        if (SETTING.botOwner == sender.userId) {
+            role = BotRole.OWNER
+        }
+
+
         val commandSender = CommandSender(groupId, sender.nickname, sender.userId, role, message, false)
         customizeCommandAllocator.allocator(commandSender)?.let {
             bot.sendGroupMsgLimit(groupId, it)

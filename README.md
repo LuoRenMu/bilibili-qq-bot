@@ -25,9 +25,11 @@ json文件不支持注释
   "text_forward":300, // 文本超过300将分块转发(较低将出现文本错误)
   "image_forward":3, // 超过该数量的图片将作为转发发送
   "group_bvid_listen": true, //bvid视频监听总开关
+  "message_limit_list": true, //使用消息限制队列(3条消息内重复不会发送)
+  "leave_group_owner_not_exists": true, // 待支持(主人不在该群时自动退出)
   "listen_list": [  //监听列表、支持监听多个用户 (暂时只支持监听用户动态)
     {
-      "live_broadcast": false,  //暂未支持
+      "live_broadcast": false,  //监听是否正在直播中
       "uid": "",  //监听的b站用户uid
       "group_bilibili_push":[] //该监听只允许推送到的群(banned_group_bilibili_push字段无法对其限制)
     },
@@ -104,6 +106,10 @@ json文件不支持注释
 
 
 自定义发送音频、视频、图片 [OneBotCQ码](https://283375.github.io/onebot_v11_vitepress/message/segment.html#%E7%BA%AF%E6%96%87%E6%9C%AC)
+
+#### 发送前消息转换(待完善)
+暂时不支持自定义变量更改 
+
 
 
 本项目由LiteLoaderNTQQ、LLonebot 、shiro 强力驱动
