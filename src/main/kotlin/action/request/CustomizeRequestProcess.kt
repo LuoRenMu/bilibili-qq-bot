@@ -12,7 +12,9 @@ import com.alibaba.fastjson2.parseArray
 import com.alibaba.fastjson2.parseObject
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
+import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 
 /**
  * @author LoMu
@@ -69,11 +71,13 @@ class CustomizeRequestProcess(
     fun processReturnJsonFiled(
         id: Int,
         customizeRequestId: String,
+        thisUrl: String,
         jsonFiled: MutableList<String>,
         jsonObject: JSONObject,
     ): JSONObject {
         val json = JSONObject()
-
+        json["this"] = thisUrl
+        json["uuid"] = UUID.randomUUID().toString()
         jsonFiled.forEach {
             if (jsonObject.containsKey(it)) {
                 json[it] = jsonObject[it].toString()
@@ -81,7 +85,10 @@ class CustomizeRequestProcess(
                 log.error { "$id json filed $it not found" }
             }
         }
-        val returnJson = JSONObject().apply { put(customizeRequestId, json) }
+
+        val returnJson = JSONObject().apply {
+            put(customizeRequestId, json)
+        }
         returnJsonFiled[id] = returnJson
         return json
     }
@@ -125,7 +132,13 @@ class CustomizeRequestProcess(
                     processReturnMessage(messageId, message, response!!)
                 }
                 responseProcess.returnJsonFiled?.let { jsonFiled ->
-                    processReturnJsonFiled(messageId, customizeRequest.id, jsonFiled, response!!)
+                    processReturnJsonFiled(
+                        messageId,
+                        customizeRequest.id,
+                        customizeRequest.requestDetailed.url,
+                        jsonFiled,
+                        response!!
+                    )
                 }
                 responseProcess.download?.let { download ->
                     var path = download.downloadPath
@@ -133,8 +146,12 @@ class CustomizeRequestProcess(
                     fields.forEach { field ->
                         path = MatcherData.replaceDollardName(path, field, response!!.getStringZ(field))
                     }
-
-                    requestData.downloadStream(response!!.getStringZ(download.downloadFiled)!!,path)
+                    thread(start = true) {
+                        requestData.downloadStream(
+                            response!!.getStringZ(download.downloadFiled)!!,
+                            path
+                        )
+                    }
                 }
             }
         } ?: run {

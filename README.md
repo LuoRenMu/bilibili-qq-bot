@@ -107,6 +107,55 @@ json文件不支持注释
 
 自定义发送音频、视频、图片 [OneBotCQ码](https://283375.github.io/onebot_v11_vitepress/message/segment.html#%E7%BA%AF%E6%96%87%E6%9C%AC)
 
+#### 自定义数据请求并发送
+````json
+{
+  "request_list": [
+    {
+      "id": "get_img",  // 自定义名称
+      "request_detailed": { //详细参看request下的bilibili_request.json
+        "url": "https://image.anosu.top/pixiv/json?r18=0&keyword=arknights",  //请求url
+        "method": "get" // get请求
+      },
+      "response_process": {
+        "condition_process": {
+          "condition": "明日方舟", //包含 正则表达式 判断http请求返回的数据中是否包含明日方舟字符
+          "not_exists": {
+            "process": "RE_REQUEST", // IGNORE 忽略,RE_REQUEST 重试
+            "try_count": 5, //尝试次数  仅在RE_REQUEST下生效
+            "interval": 1 //每次请求后睡眠时间 以整数秒为单位  仅在RE_REQUEST下生效
+          }
+        },
+        "return_json_filed": [ // 保存请求返回的字段
+          "url", 
+          "uid",
+          "title",
+          "uuid",  // 固有字段 随机生成的uuid
+          "this"  // 固有字段 request_detailed下的url
+        ],
+        "download": { // 发送请求并下载流文件
+          "download_filed": "url", // 使用return_json_filed中保存的字段
+          "download_path": "E:/images/ark/${title}-${uid}.png" //保存至本地  ${title}使用return_json_filed中保存的字段
+        }
+      }
+    }
+  ]
+}
+````
+
+在customize_command中使用customize_request
+````json
+	{
+			"command":"^(test)$",
+			"group_list":[],
+			"permissions_message":"权限不允许",
+			"probability":1.0,
+			"return_message":"return ${customize_request.get_img.url}", // 使用customize_request中id为get_img字段为url
+			"role":"member",
+			"sender_list":[]
+		}
+````
+
 #### 发送前消息转换(待完善)
 暂时不支持自定义变量更改 
 

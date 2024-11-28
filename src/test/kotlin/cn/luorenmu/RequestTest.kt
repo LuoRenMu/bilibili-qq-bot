@@ -39,7 +39,5 @@ class RequestTest(
                 probability = 0.3
             )
         )
-        val allocator = customizeCommandAllocator.allocator(commandSender)
-        log.info { "allocator: $allocator" }
     }
 }

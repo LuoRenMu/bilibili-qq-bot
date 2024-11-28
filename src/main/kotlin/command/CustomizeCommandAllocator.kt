@@ -44,9 +44,10 @@ class CustomizeCommandAllocator(
                     "customize_request" -> {
                         customizeRequestProcess.process(sender.messageId, split[1])
                         val jsonField = field.replace("customize_request.", "")
-                        returnJsonFiled[sender.messageId]?.let { json ->
+                        returnJsonFiled.remove(sender.messageId)?.let { json ->
                             returnMessage =
                                 MatcherData.replaceDollardName(returnMessage, field, json.getStringZ(jsonField))
+
                         }
                     }
 
