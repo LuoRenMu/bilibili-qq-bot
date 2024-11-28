@@ -4,12 +4,13 @@ package cn.luorenmu.command.entity
  * @author LoMu
  * Date 2024.11.17 19:50
  */
-data class CommandSender (
+data class CommandSender(
     var groupOrSenderId: Long,
     var senderName: String,
     var senderId: Long,
-    var role : BotRole,
+    var role: BotRole,
+    var messageId: Int,
     var message: String,
     // unlimited is true if disregard role limit
-    var unlimited : Boolean = false
+    var unlimited: Boolean = false,
 )

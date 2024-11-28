@@ -1,7 +1,12 @@
 package cn.luorenmu.command
 
+import cn.luorenmu.action.request.CustomizeRequestProcess
+import cn.luorenmu.action.request.CustomizeRequestProcess.Companion.returnJsonFiled
 import cn.luorenmu.command.entity.BotRole
 import cn.luorenmu.command.entity.CommandSender
+import cn.luorenmu.common.extensions.getStringZ
+import cn.luorenmu.common.extensions.scanDollarString
+import cn.luorenmu.common.utils.MatcherData
 import cn.luorenmu.common.utils.file.CUSTOMIZE_COMMAND
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
@@ -11,19 +16,52 @@ import org.springframework.stereotype.Component
  * Date 2024.11.27 12:17
  */
 @Component
-class CustomizeCommandAllocator {
+class CustomizeCommandAllocator(
+    val customizeRequestProcess: CustomizeRequestProcess,
+) {
     private val log = KotlinLogging.logger {}
 
-    fun rolePermissions(configRoleStr: String, senderRole: BotRole): Boolean {
+    private fun rolePermissions(configRoleStr: String, senderRole: BotRole): Boolean {
         return BotRole.convert(configRoleStr).roleNumber <= senderRole.roleNumber
     }
 
-    fun commandMatcher(commandMessage: String, sender: CommandSender): Boolean {
+    private fun commandMatcher(commandMessage: String, sender: CommandSender): Boolean {
         return sender.message.contains(commandMessage.toRegex())
     }
 
+    fun process(sender: CommandSender): String? {
+        val message = allocator(sender)
+        message?.let {
+            val fields = it.scanDollarString()
+            if (fields.isEmpty()) {
+                return it
+            }
 
-    fun allocator(sender: CommandSender): String? {
+            var returnMessage = it
+            fields.forEach { field ->
+                val split = field.split('.')
+                when (split[0]) {
+                    "customize_request" -> {
+                        customizeRequestProcess.process(sender.messageId, split[1])
+                        val jsonField = field.replace("customize_request.", "")
+                        returnJsonFiled[sender.messageId]?.let { json ->
+                            returnMessage =
+                                MatcherData.replaceDollardName(returnMessage, field, json.getStringZ(jsonField))
+                        }
+                    }
+
+                    else -> {
+                        log.error { "not support ${split[0]}" }
+                    }
+                }
+            }
+            return returnMessage
+        }
+        return null
+    }
+
+
+    private fun allocator(sender: CommandSender): String? {
         val customizeCommandList = CUSTOMIZE_COMMAND.customizeCommandList.filter {
             commandMatcher(it.command, sender)
         }
@@ -46,7 +84,6 @@ class CustomizeCommandAllocator {
                             } ?: run {
                             limitMessage = groupLimitCustomizeCommandList.random().permissionsMessage
                         }
-
                     }
                 }
             }

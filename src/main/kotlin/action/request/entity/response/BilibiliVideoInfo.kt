@@ -1,4 +1,4 @@
-package cn.luorenmu.action.listenProcess.entity.response
+package cn.luorenmu.action.request.entity.response
 
 import com.alibaba.fastjson2.annotation.JSONField
 

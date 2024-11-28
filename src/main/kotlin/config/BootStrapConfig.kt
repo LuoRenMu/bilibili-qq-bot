@@ -97,6 +97,7 @@ class BotStrapConfig(
         initCommandFile()
         initCustomizeCommandFile()
         initMessageConvert()
+        initCustomizeRequest()
 
         SETTING.listenList.forEach {
             if (it.uid.isNotBlank() && !BilibiliCacheUtils.exists(it.uid)) {

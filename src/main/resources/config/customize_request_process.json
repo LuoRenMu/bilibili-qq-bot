@@ -1,0 +1,30 @@
+{
+  "request_list": [
+    {
+      "id": "get_img",
+      "request_detailed": {
+        "url": "https://image.anosu.top/pixiv/json?r18=0&keyword=arknights",
+        "method": "get"
+      },
+      "response_process": {
+        "condition_process": {
+          "condition": "明日方舟",
+          "not_exists": {
+            "process": "RE_REQUEST",
+            "try_count": 5,
+            "interval": 1
+          }
+        },
+        "return_json_filed": [
+          "url",
+          "uid",
+          "title"
+        ],
+        "download": {
+          "download_filed": "url",
+          "download_path": "E:/images/ark/${title}-${uid}.png"
+        }
+      }
+    }
+  ]
+}

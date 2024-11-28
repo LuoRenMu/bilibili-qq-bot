@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component
 @Component
 class AopJsonException {
     val log = KotlinLogging.logger { }
-    @Pointcut("execution(* cn.luorenmu.action.listenProcess.BilibiliRequestData.*(..))")
+    @Pointcut("execution(* cn.luorenmu.action.request.BilibiliRequestData.*(..))")
     fun pt() {
     }
 

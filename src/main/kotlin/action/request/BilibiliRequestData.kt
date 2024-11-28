@@ -1,10 +1,9 @@
-package cn.luorenmu.action.listenProcess
+package cn.luorenmu.action.request
 
-import cn.luorenmu.action.listenProcess.entity.response.*
+import cn.luorenmu.action.request.entity.response.*
 import cn.luorenmu.common.utils.file.SETTING
 import cn.luorenmu.common.utils.getVideoPath
-import cn.luorenmu.entiy.Request
-import cn.luorenmu.file.ReadWriteFile
+import cn.luorenmu.entiy.Request.RequestParam
 import cn.luorenmu.listen.log
 import cn.luorenmu.request.RequestController
 import com.alibaba.fastjson2.to
@@ -22,7 +21,7 @@ import java.io.File
  * -404：无视频
  */
 @Component
-class BilibiliRequestData {
+class BilibiliRequestData : RequestData() {
 
     /**
      *  @param bvid (bv号)
@@ -44,7 +43,8 @@ class BilibiliRequestData {
                     return ""
                 }
                 videoInfos.durl.firstOrNull()?.let { videoInfo ->
-                    if (downloadStream(videoInfo.url, outputPath)) {
+                    val header = RequestParam("referer", "https://www.bilibili.com")
+                    if (downloadStream(videoInfo.url, outputPath, mutableListOf(header))) {
                         return outputPath
                     }
                 }
@@ -53,22 +53,6 @@ class BilibiliRequestData {
             log.error { e.stackTraceToString() }
         }
         return null
-    }
-
-    fun downloadStream(url: String, outputPath: String): Boolean {
-        val requestDetailed = Request.RequestDetailed()
-        val headers = Request.RequestParam("referer", "https://www.bilibili.com")
-        requestDetailed.url = url
-        requestDetailed.method = "GET"
-        requestDetailed.headers = listOf(headers)
-        val requestController = RequestController(requestDetailed)
-        val resp = requestController.request()
-        resp?.let {
-            val stream = resp.bodyStream()
-            ReadWriteFile.writeStreamFile(outputPath, stream)
-            return true
-        }
-        return false
     }
 
 

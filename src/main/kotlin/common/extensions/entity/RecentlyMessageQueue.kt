@@ -1,4 +1,4 @@
-package cn.luorenmu.entity
+package cn.luorenmu.common.extensions.entity
 
 import cn.luorenmu.listen.log
 import org.springframework.util.LinkedMultiValueMap

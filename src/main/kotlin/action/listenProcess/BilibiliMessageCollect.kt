@@ -1,6 +1,7 @@
 package cn.luorenmu.action.listenProcess
 
 import cn.luorenmu.action.listenProcess.entity.BilibiliArticle
+import cn.luorenmu.action.request.BilibiliRequestData
 import com.mikuac.shiro.common.utils.MsgUtils
 import org.springframework.stereotype.Component
 

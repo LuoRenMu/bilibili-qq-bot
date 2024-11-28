@@ -6,7 +6,6 @@ import cn.luorenmu.command.CustomizeCommandAllocator
 import cn.luorenmu.command.entity.BotRole
 import cn.luorenmu.command.entity.CommandSender
 import cn.luorenmu.common.extensions.sendGroupMsgLimit
-import cn.luorenmu.common.utils.file.CUSTOMIZE_COMMAND
 import cn.luorenmu.common.utils.file.SETTING
 import com.mikuac.shiro.annotation.GroupMessageHandler
 import com.mikuac.shiro.annotation.common.Shiro
@@ -34,6 +33,7 @@ class GroupEventListen(
     fun groupMsgListen(bot: Bot, groupMessageEvent: GroupMessageEvent) {
         val groupId = groupMessageEvent.groupId
         val message = groupMessageEvent.message
+        val messageId = groupMessageEvent.messageId
 
         if (SETTING.groupBvidListen) {
             if (!SETTING.bannedGroupBvidListen.contains(groupId)) {
@@ -50,8 +50,9 @@ class GroupEventListen(
             role = BotRole.OWNER
         }
 
-        val commandSender = CommandSender(groupId, sender.nickname, sender.userId, role, message, false)
-        customizeCommandAllocator.allocator(commandSender)?.let {
+        val commandSender =
+            CommandSender(groupId, sender.nickname, sender.userId, role, messageId, message, false)
+        customizeCommandAllocator.process(commandSender)?.let {
             bot.sendGroupMsgLimit(groupId, it)
         }
         commandAllocator.allocator(commandSender)?.let {

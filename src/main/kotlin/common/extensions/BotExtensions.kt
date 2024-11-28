@@ -1,13 +1,13 @@
 package cn.luorenmu.common.extensions
 
-import cn.luorenmu.action.listenProcess.BilibiliRequestData
+import cn.luorenmu.action.request.BilibiliRequestData
 import cn.luorenmu.action.listenProcess.entity.BilibiliArticle
 import cn.luorenmu.common.utils.file.MESSAGE_CONVERT
 import cn.luorenmu.common.utils.file.SETTING
 import cn.luorenmu.config.entity.MessageConvert
 import cn.luorenmu.config.entity.QQ_GROUPS
-import cn.luorenmu.entity.RecentlyMessageQueue
-import cn.luorenmu.entity.SelfSendMsg
+import cn.luorenmu.common.extensions.entity.RecentlyMessageQueue
+import cn.luorenmu.common.extensions.entity.SelfSendMsg
 import com.mikuac.shiro.common.utils.MsgUtils
 import com.mikuac.shiro.common.utils.ShiroUtils
 import com.mikuac.shiro.core.Bot

@@ -1,7 +1,7 @@
 package cn.luorenmu.task
 
 import cn.luorenmu.action.listenProcess.BilibiliMessageCollect
-import cn.luorenmu.action.listenProcess.BilibiliRequestData
+import cn.luorenmu.action.request.BilibiliRequestData
 import cn.luorenmu.action.listenProcess.entity.BilibiliArticle
 import cn.luorenmu.common.extensions.groupList
 import cn.luorenmu.common.extensions.sendGroupListBilibiliarticle

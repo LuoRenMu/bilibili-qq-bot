@@ -1,4 +1,4 @@
-package cn.luorenmu.entity
+package cn.luorenmu.common.extensions.entity
 
 /**
  * @author LoMu

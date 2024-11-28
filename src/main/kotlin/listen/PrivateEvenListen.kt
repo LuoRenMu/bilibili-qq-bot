@@ -37,10 +37,11 @@ class PrivateEvenListen(
             sender.nickname,
             sender.userId,
             role,
+            privateMessage.messageId,
             privateMessage.message
         )
 
-        customizeCommandAllocator.allocator(commandSender)?.let {
+        customizeCommandAllocator.process(commandSender)?.let {
             bot.sendPrivateMsg(sender.userId, it, false)
         }
 

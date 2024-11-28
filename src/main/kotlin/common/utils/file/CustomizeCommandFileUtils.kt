@@ -16,12 +16,7 @@ val CUSTOMIZER_COMMAND_PATH = ReadWriteFile.CURRENT_PATH + "customize_command.js
 
 
 @Synchronized
-fun initCustomizeCommandFile(customizeCommand: CustomizeCommand? = null): Boolean {
-    customizeCommand?.let {
-        CUSTOMIZE_COMMAND = it
-        ReadWriteFile.entityWriteFile(COMMAND_PATH, COMMAND)
-    }
-
+fun initCustomizeCommandFile(): Boolean {
     if (!File(CUSTOMIZER_COMMAND_PATH).exists()) {
         val initCustomizeCommand =
             ResourceUtil.getResource("config/customize_command.json").openStream().bufferedReader().readText()
