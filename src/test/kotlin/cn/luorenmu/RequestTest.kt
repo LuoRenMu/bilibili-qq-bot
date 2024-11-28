@@ -25,10 +25,20 @@ class RequestTest(
     @Autowired val customizeCommandAllocator: CustomizeCommandAllocator,
 ) {
     val log = KotlinLogging.logger {}
+
     @Test
     fun test() {
-       val commandSender = CommandSender(646708986, "123", 2842775752L, BotRole.OWNER, "test", false)
-        CUSTOMIZE_COMMAND.customizeCommandList.add(CustomizeCommandInfo("权限不足","^(test)$", returnMessageTemp = "执行成功", groupList = mutableListOf(646708986), role = "owner", probability = 0.3))
+        val commandSender = CommandSender(646708986, "123", 2842775752L, BotRole.OWNER, 123,"test", false)
+        CUSTOMIZE_COMMAND.customizeCommandList.add(
+            CustomizeCommandInfo(
+                "权限不足",
+                "^(test)$",
+                returnMessageTemp = "执行成功",
+                groupList = mutableListOf(646708986),
+                role = "owner",
+                probability = 0.3
+            )
+        )
         val allocator = customizeCommandAllocator.allocator(commandSender)
         log.info { "allocator: $allocator" }
     }
