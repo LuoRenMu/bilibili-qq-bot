@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("")
-class System(
-    private val botContainer: BotContainer,
-    private val bilibiliMessagePush: BilibiliMessagePush,
-) {
+class System{
     @RequestMapping("/")
     fun system(): String {
         return "running success "

@@ -4,6 +4,7 @@ import cn.luorenmu.command.CommandAllocator
 import cn.luorenmu.command.CustomizeCommandAllocator
 import cn.luorenmu.command.entity.BotRole
 import cn.luorenmu.command.entity.CommandSender
+import cn.luorenmu.command.entity.MessageType
 import cn.luorenmu.common.extensions.sendPrivateMsg
 import cn.luorenmu.common.utils.file.SETTING
 import com.mikuac.shiro.annotation.PrivateMessageHandler
@@ -39,10 +40,11 @@ class PrivateEvenListen(
             sender.userId,
             role,
             privateMessage.messageId,
-            privateMessage.message
+            privateMessage.message,
+            MessageType.PRIVATE
         )
 
-        customizeCommandAllocator.process(commandSender)?.let {
+        customizeCommandAllocator.allocatorAfterProcess(commandSender)?.let {
             it.forEach { returnMessage ->
                 bot.sendPrivateMsg(sender.userId, returnMessage)
             }

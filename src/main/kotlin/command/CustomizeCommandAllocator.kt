@@ -4,12 +4,11 @@ import cn.luorenmu.action.request.CustomizeRequestProcess
 import cn.luorenmu.command.entity.BotRole
 import cn.luorenmu.command.entity.CommandSender
 import cn.luorenmu.command.entity.DeepMessage
-import cn.luorenmu.common.extensions.getStringZ
+import cn.luorenmu.common.extensions.getValueByPath
 import cn.luorenmu.common.extensions.scanDollarString
 import cn.luorenmu.common.utils.MatcherData
 import cn.luorenmu.common.utils.file.CUSTOMIZE_COMMAND
-import com.alibaba.fastjson2.parseObject
-import com.alibaba.fastjson2.toJSONString
+import cn.luorenmu.common.utils.file.senderDataReplace
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 
@@ -31,7 +30,7 @@ class CustomizeCommandAllocator(
         return sender.message.contains(commandMessage.toRegex())
     }
 
-    fun process(sender: CommandSender): MutableList<String>? {
+    fun allocatorAfterProcess(sender: CommandSender): MutableList<String>? {
         val messageListOrNull = allocator(sender)
         messageListOrNull?.let { messageList ->
             for ((index, it) in messageList.withIndex()) {
@@ -45,20 +44,26 @@ class CustomizeCommandAllocator(
                     val split = field.split('.')
                     when (split[0]) {
                         "customize_request" -> {
-                            val returnJsonFiled = customizeRequestProcess.process(split[1])
+                            val returnJsonFiled = customizeRequestProcess.process(split[1], sender)
                             val jsonField = field.replace("customize_request.", "")
-                            returnJsonFiled?.let { json ->
+                            returnJsonFiled.let returnJsonFiled@{ response ->
+                                if (!response.success) {
+                                    response.msg?.let { msg ->
+                                        returnMessage = msg
+                                    }
+                                    return@returnJsonFiled
+                                }
                                 returnMessage =
-                                    MatcherData.replaceDollardName(returnMessage, field, json.getStringZ(jsonField))
-                            } ?: run {
-                                returnMessage =
-                                    MatcherData.replaceDollardName(returnMessage, field, "请求失败")
+                                    MatcherData.replaceDollardName(
+                                        returnMessage,
+                                        field,
+                                        response.jsonObject!!.getValueByPath(jsonField)
+                                    )
                             }
                         }
 
                         "sender" -> {
-                            val newField = field.replace("sender.", "")
-                            val stringZ = sender.toJSONString().parseObject().getStringZ(newField)
+                            val stringZ = senderDataReplace(field, sender)
                             stringZ?.let { senderInfo ->
                                 returnMessage =
                                     MatcherData.replaceDollardName(returnMessage, field, senderInfo)

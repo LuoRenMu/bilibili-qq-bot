@@ -1,10 +1,8 @@
 package cn.luorenmu.command
 
-import cn.luorenmu.action.request.CustomizeRequestProcess
 import cn.luorenmu.command.entity.BotRole
 import cn.luorenmu.command.entity.CommandId
 import cn.luorenmu.command.entity.CommandSender
-import cn.luorenmu.common.extensions.scanDollarString
 import cn.luorenmu.common.utils.file.COMMAND
 import org.springframework.stereotype.Component
 
@@ -14,7 +12,7 @@ import org.springframework.stereotype.Component
  */
 @Component
 class CommandAllocator(
-    val commandProcess: CommandProcess
+    val commandProcess: CommandProcess,
 ) {
 
     /**
@@ -33,7 +31,6 @@ class CommandAllocator(
         }
         return false
     }
-
 
 
     fun allocator(sender: CommandSender): String? {

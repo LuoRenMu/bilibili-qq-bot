@@ -5,6 +5,7 @@ import cn.luorenmu.command.CommandAllocator
 import cn.luorenmu.command.CustomizeCommandAllocator
 import cn.luorenmu.command.entity.BotRole
 import cn.luorenmu.command.entity.CommandSender
+import cn.luorenmu.command.entity.MessageType
 import cn.luorenmu.common.extensions.sendGroupMsgLimit
 import cn.luorenmu.common.utils.file.SETTING
 import com.mikuac.shiro.annotation.GroupMessageHandler
@@ -51,8 +52,8 @@ class GroupEventListen(
         }
 
         val commandSender =
-            CommandSender(groupId, sender.nickname, sender.userId, role, messageId, message, false)
-        customizeCommandAllocator.process(commandSender)?.let {
+            CommandSender(groupId, sender.nickname, sender.userId, role, messageId, message, MessageType.GROUP, false)
+        customizeCommandAllocator.allocatorAfterProcess(commandSender)?.let {
             it.forEach { returnMessage ->
                 bot.sendGroupMsgLimit(groupId, returnMessage)
             }

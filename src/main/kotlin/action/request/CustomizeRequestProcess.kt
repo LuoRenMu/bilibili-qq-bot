@@ -1,16 +1,16 @@
 package cn.luorenmu.action.request
 
+import cn.luorenmu.action.request.entity.CustomizeResponse
 import cn.luorenmu.action.request.entity.NotExists
 import cn.luorenmu.action.request.entity.ResponseProcess
-import cn.luorenmu.common.extensions.getStringZ
+import cn.luorenmu.command.entity.CommandSender
+import cn.luorenmu.common.extensions.getValueByPath
 import cn.luorenmu.common.extensions.scanDollarString
 import cn.luorenmu.common.utils.MatcherData
 import cn.luorenmu.common.utils.file.CUSTOMIZE_REQUEST
+import cn.luorenmu.entiy.Request.RequestDetailed
 import cn.luorenmu.request.RequestController
-import com.alibaba.fastjson2.JSONException
-import com.alibaba.fastjson2.JSONObject
-import com.alibaba.fastjson2.parseArray
-import com.alibaba.fastjson2.parseObject
+import com.alibaba.fastjson2.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
@@ -29,24 +29,34 @@ class CustomizeRequestProcess(
     private val log = KotlinLogging.logger {}
 
 
-    fun processRequest(id: String): JSONObject? {
-        val requestInfo = CUSTOMIZE_REQUEST.requestList.firstOrNull { it.id == id }
-        requestInfo?.let {
-            val request = RequestController(it.requestDetailed)
+    fun processRequest(requestDetailedTemp: RequestDetailed, message: String): CustomizeResponse {
+        // 深拷贝
+        val requestDetailed = requestDetailedTemp.toJSONString().to<RequestDetailed>()
+        val regex = requestDetailed.url.scanDollarString()
+        val request = RequestController(requestDetailed)
+        regex.forEach {
+            it.toRegex().find(message)?.let { matchResult ->
+                request.replaceUrl(it, matchResult.groups[1]!!.value)
+            } ?: run {
+                log.error { "${requestDetailedTemp.url} not found $it  message: $message" }
+            }
+
+        }
+
+        try {
             request.request()?.let { httpResponse ->
                 try {
-                    return httpResponse.body().parseObject()
+                    return CustomizeResponse(httpResponse.body().parseObject())
                 } catch (e: JSONException) {
-                    return httpResponse.body().parseArray<JSONObject>().first()
+                    return CustomizeResponse(httpResponse.body().parseArray<JSONObject>().first())
                 }
-
             } ?: run {
-                log.error { "request failed with id $id" }
+                log.error { "request failed with id ${requestDetailed.url}" }
             }
-        } ?: run {
-            log.error { "customize request  $id not found" }
+        } catch (e: Exception) {
+            log.error { e.printStackTrace() }
         }
-        return null
+        return CustomizeResponse(false, "请求失败")
     }
 
     fun processCondition(condition: String, jsonObject: JSONObject): Boolean {
@@ -81,11 +91,14 @@ class CustomizeRequestProcess(
     }
 
 
-    fun process(id: String): JSONObject? {
+    fun process(id: String, commandSender: CommandSender): CustomizeResponse {
         try {
             CUSTOMIZE_REQUEST.requestList.firstOrNull { it.id == id }?.let { customizeRequest ->
-                return processRequest(customizeRequest.id)?.let { responseTemp ->
-                    var response: JSONObject? = responseTemp
+                return processRequest(
+                    customizeRequest.requestDetailed,
+                    commandSender.message
+                ).let { customizeResponse ->
+                    var response: JSONObject? = customizeResponse.jsonObject
                     val responseProcess = customizeRequest.responseProcess
                     responseProcess.conditionProcess?.let { conditionProcess ->
                         when (conditionProcess.notExists.process) {
@@ -98,20 +111,27 @@ class CustomizeRequestProcess(
                                         requestSuccess = true
                                         break
                                     } else {
-                                        response = processRequest(customizeRequest.id)
+                                        response = processRequest(
+                                            customizeRequest.requestDetailed,
+                                            commandSender.message
+                                        ).jsonObject
                                     }
                                     TimeUnit.SECONDS.sleep(interval.toLong())
                                 }
                                 if (!requestSuccess) {
                                     log.warn { "customize id : ${customizeRequest.id} -> Unable to meet condition Retry exceeded the upper limit  " }
-                                    return null
+                                    return CustomizeResponse(false, "请求超出限制,仍无法获得有效消息")
                                 }
                             }
 
                             NotExists.IGNORE -> {
-                                if (!processCondition(conditionProcess.condition, response!!)) {
+                                if (!customizeResponse.success || !processCondition(
+                                        conditionProcess.condition,
+                                        response!!
+                                    )
+                                ) {
                                     log.warn { "customize id : ${customizeRequest.id} -> Failure to meet conditions was ignored " }
-                                    return null
+                                    return CustomizeResponse(false, "请求失败")
                                 }
                             }
                         }
@@ -120,19 +140,18 @@ class CustomizeRequestProcess(
 
                     processDownload(responseProcess, response!!)
 
-                    processReturnJsonFiled(
+                    val returnJsonFiled = processReturnJsonFiled(
                         customizeRequest.id, customizeRequest.requestDetailed.url, responseProcess, response!!
                     )
-
+                    CustomizeResponse(true, returnJsonFiled)
                 }
             } ?: run {
                 log.error { "customize request not found or failed id : $id" }
             }
         } catch (e: Exception) {
             log.error { e.printStackTrace() }
-            return null
         }
-        return null
+        return CustomizeResponse(false, "内部错误")
     }
 
 
@@ -142,10 +161,11 @@ class CustomizeRequestProcess(
             var path = download.downloadPath
             val fields = path.scanDollarString()
             fields.forEach { field ->
-                path = MatcherData.replaceDollardName(path, field, response.getStringZ(field))
+                val valueByPath = response.getValueByPath(field)
+                path = MatcherData.replaceDollardName(path, field, valueByPath)
             }
             requestData.downloadStream(
-                response.getStringZ(download.downloadFiled)!!, path
+                response.getValueByPath(download.downloadFiled)!!, path
             )
         }
     }

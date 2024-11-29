@@ -11,6 +11,11 @@ data class CommandSender(
     var role: BotRole,
     var messageId: Int,
     var message: String,
+    var messageType: MessageType,
     // unlimited is true if disregard role limit
     var unlimited: Boolean = false,
 )
+
+enum class MessageType{
+    PRIVATE,GROUP
+}
