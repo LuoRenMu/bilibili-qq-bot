@@ -96,6 +96,12 @@ json文件不支持注释
 			"group_list":[],    // 该命令只在该群生效
 			"permissions_message":"权限不允许",  //权限不足回复内容 如果字符串为空"permissions_message":"" 表示不回复
 			"return_message":" 我在哦~", // 成功执行
+            "deep_message": { // 深入发送消息 可无限延伸 该字段可为null
+              "message": "${sender.senderName}", // 下一条消息
+              "deep_message": {
+                "message": "${sender.message}" // 下一条消息
+              }
+            },
 			"role":"member",  //权限
 			"sender_list":[], // 指定发送者QQ 只有该用户能够触发 
 			"probability": 1.0  // 触发概率 0.0 ~ 1.0

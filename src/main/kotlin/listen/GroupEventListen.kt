@@ -53,7 +53,9 @@ class GroupEventListen(
         val commandSender =
             CommandSender(groupId, sender.nickname, sender.userId, role, messageId, message, false)
         customizeCommandAllocator.process(commandSender)?.let {
-            bot.sendGroupMsgLimit(groupId, it)
+            it.forEach { returnMessage ->
+                bot.sendGroupMsgLimit(groupId, returnMessage)
+            }
         }
         commandAllocator.allocator(commandSender)?.let {
             bot.sendGroupMsgLimit(groupId, it)

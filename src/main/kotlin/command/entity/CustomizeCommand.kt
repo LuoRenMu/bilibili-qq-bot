@@ -22,6 +22,8 @@ data class CustomizeCommandInfo(
     var groupList: MutableList<Long> = mutableListOf(),
     @JSONField(name = "return_message")
     var returnMessageTemp: String = "",
+    @JSONField(name = "deep_message")
+    var deepMessage: DeepMessage? = null,
     var role: String = "member",
     val probability: Double = 1.0,
 ) {
@@ -52,3 +54,9 @@ data class CustomizeCommandInfo(
             return null
         }
 }
+
+data class DeepMessage(
+    var message: String = "",
+    @JSONField(name = "deep_message")
+    var deepMessage: DeepMessage? = null,
+)

@@ -14,10 +14,6 @@ import com.alibaba.fastjson2.toJSONString
 
 
 fun main() {
-    val request = RequestController(
-        Request.RequestDetailed().apply {
-            url = "https://image.anosu.top/pixiv/json?r18=0&keyword=arknights"
-            method = "GET"
-        }).request().body().parseObject()
-    println(request)
+    val list = mutableListOf<Int>(1,2,3,4,5,6,7,8,9)
+
 }
