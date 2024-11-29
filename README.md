@@ -95,7 +95,7 @@ json文件不支持注释
 			"command":"^(ping)$", //命令
 			"group_list":[],    // 该命令只在该群生效
 			"permissions_message":"权限不允许",  //权限不足回复内容 如果字符串为空"permissions_message":"" 表示不回复
-			"return_message":"我在哦~", // 成功执行
+			"return_message":" 我在哦~", // 成功执行
 			"role":"member",  //权限
 			"sender_list":[], // 指定发送者QQ 只有该用户能够触发 
 			"probability": 1.0  // 触发概率 0.0 ~ 1.0
@@ -103,7 +103,18 @@ json文件不支持注释
 	]
 }
 ````
-
+##### 获取发送者信息
+* 通过语法${sender.senderName} 调用
+````kotlin
+    data class CommandSender(
+    var groupOrSenderId: Long, // 群号或者私聊消息的发送者QQ
+    var senderName: String, // 发送者名称
+    var senderId: Long, // 发送者QQ
+    var role: BotRole, // 发送者权限
+    var messageId: Int, // 消息ID(自动生成的唯一ID)
+    var message: String, // 发送者发送的原消息
+)
+````
 
 自定义发送音频、视频、图片 [OneBotCQ码](https://283375.github.io/onebot_v11_vitepress/message/segment.html#%E7%BA%AF%E6%96%87%E6%9C%AC)
 
@@ -119,11 +130,11 @@ json文件不支持注释
       },
       "response_process": {
         "condition_process": {
-          "condition": "明日方舟", //包含 正则表达式 判断http请求返回的数据中是否包含明日方舟字符
-          "not_exists": {
+          "condition": "明日方舟", //包含 正则表达式 判断http请求返回的数据中是否包含明日方舟字符 可不设置
+          "not_exists": { // 不满足条件
             "process": "RE_REQUEST", // IGNORE 忽略,RE_REQUEST 重试
             "try_count": 5, //尝试次数  仅在RE_REQUEST下生效
-            "interval": 1 //每次请求后睡眠时间 以整数秒为单位  仅在RE_REQUEST下生效
+            "interval": 1 //每次请求后睡眠时间 以整数秒为单位  仅在RE_REQUEST下生效  
           }
         },
         "return_json_filed": [ // 保存请求返回的字段
@@ -133,7 +144,7 @@ json文件不支持注释
           "uuid",  // 固有字段 随机生成的uuid
           "this"  // 固有字段 request_detailed下的url
         ],
-        "download": { // 发送请求并下载流文件
+        "download": { // 发送请求并下载流文件 可不设置
           "download_filed": "url", // 使用return_json_filed中保存的字段
           "download_path": "E:/images/ark/${title}-${uid}.png" //保存至本地  ${title}使用return_json_filed中保存的字段
         }

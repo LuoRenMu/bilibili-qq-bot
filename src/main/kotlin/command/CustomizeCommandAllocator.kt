@@ -1,13 +1,14 @@
 package cn.luorenmu.command
 
 import cn.luorenmu.action.request.CustomizeRequestProcess
-import cn.luorenmu.action.request.CustomizeRequestProcess.Companion.returnJsonFiled
 import cn.luorenmu.command.entity.BotRole
 import cn.luorenmu.command.entity.CommandSender
 import cn.luorenmu.common.extensions.getStringZ
 import cn.luorenmu.common.extensions.scanDollarString
 import cn.luorenmu.common.utils.MatcherData
 import cn.luorenmu.common.utils.file.CUSTOMIZE_COMMAND
+import com.alibaba.fastjson2.parseObject
+import com.alibaba.fastjson2.toJSONString
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 
@@ -42,12 +43,23 @@ class CustomizeCommandAllocator(
                 val split = field.split('.')
                 when (split[0]) {
                     "customize_request" -> {
-                        customizeRequestProcess.process(sender.messageId, split[1])
+                        val returnJsonFiled = customizeRequestProcess.process(split[1])
                         val jsonField = field.replace("customize_request.", "")
-                        returnJsonFiled.remove(sender.messageId)?.let { json ->
+                        returnJsonFiled?.let { json ->
                             returnMessage =
                                 MatcherData.replaceDollardName(returnMessage, field, json.getStringZ(jsonField))
+                        } ?: run {
+                            returnMessage =
+                                MatcherData.replaceDollardName(returnMessage, field, "请求失败")
+                        }
+                    }
 
+                    "sender" -> {
+                        val newField = field.replace("sender.", "")
+                        val stringZ = sender.toJSONString().parseObject().getStringZ(newField)
+                        stringZ?.let { senderInfo ->
+                            returnMessage =
+                                MatcherData.replaceDollardName(returnMessage, field, senderInfo)
                         }
                     }
 

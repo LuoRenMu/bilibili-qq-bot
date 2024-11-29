@@ -1,9 +1,6 @@
 package cn.luorenmu.command
 
-import cn.luorenmu.common.utils.file.loadCommandFile
-import cn.luorenmu.common.utils.file.loadCustomizeCommandFile
-import cn.luorenmu.common.utils.file.loadMessageConvert
-import cn.luorenmu.common.utils.file.loadSetting
+import cn.luorenmu.common.utils.file.*
 import cn.luorenmu.task.BilibiliMessagePush
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
@@ -24,6 +21,7 @@ class CommandProcess(
             loadCommandFile()
             loadCustomizeCommandFile()
             loadMessageConvert()
+            loadCustomizeRequestFile()
         } catch (e: Exception) {
             log.error { e.stackTraceToString() }
             return "update config failed exception : ${e.message}"

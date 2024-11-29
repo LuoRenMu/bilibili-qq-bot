@@ -26,8 +26,6 @@ data class ResponseProcess(
     var conditionProcess: ConditionProcess? = null,
     @JSONField(name = "return_json_filed")
     var returnJsonFiled: MutableList<String>? = null,
-    @JSONField(name = "return_message")
-    var returnMessage: String? = null,
     var download: DownloadProcess?,
 )
 

@@ -1,6 +1,7 @@
 package cn.luorenmu.action.request
 
 import cn.luorenmu.action.request.entity.NotExists
+import cn.luorenmu.action.request.entity.ResponseProcess
 import cn.luorenmu.common.extensions.getStringZ
 import cn.luorenmu.common.extensions.scanDollarString
 import cn.luorenmu.common.utils.MatcherData
@@ -11,10 +12,10 @@ import com.alibaba.fastjson2.JSONObject
 import com.alibaba.fastjson2.parseArray
 import com.alibaba.fastjson2.parseObject
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.concurrent.thread
 
 /**
  * @author LoMu
@@ -27,10 +28,6 @@ class CustomizeRequestProcess(
 
     private val log = KotlinLogging.logger {}
 
-    companion object {
-        val returnJsonFiled = mutableMapOf<Int, JSONObject>()
-        val returnMessage = mutableMapOf<Int, String>()
-    }
 
     fun processRequest(id: String): JSONObject? {
         val requestInfo = CUSTOMIZE_REQUEST.requestList.firstOrNull { it.id == id }
@@ -57,105 +54,99 @@ class CustomizeRequestProcess(
         return jsonStr.contains(condition.toRegex())
     }
 
-    fun processReturnMessage(id: Int, regexString: String, jsonObject: JSONObject): String {
-        val regex = regexString.toRegex()
-        val jsonString = jsonObject.toJSONString()
-        val str = StringBuilder()
-        regex.findAll(jsonString).toList().forEach {
-            str.append(it.groupValues[1])
-        }
-        returnMessage[id] = str.toString()
-        return str.toString()
-    }
 
     fun processReturnJsonFiled(
-        id: Int,
         customizeRequestId: String,
         thisUrl: String,
-        jsonFiled: MutableList<String>,
+        responseProcess: ResponseProcess,
         jsonObject: JSONObject,
-    ): JSONObject {
-        val json = JSONObject()
-        json["this"] = thisUrl
-        json["uuid"] = UUID.randomUUID().toString()
-        jsonFiled.forEach {
-            if (jsonObject.containsKey(it)) {
-                json[it] = jsonObject[it].toString()
-            } else {
-                log.error { "$id json filed $it not found" }
+    ): JSONObject? {
+        responseProcess.returnJsonFiled?.let { jsonFiled ->
+            val json = JSONObject()
+            json["this"] = thisUrl
+            json["uuid"] = UUID.randomUUID().toString()
+            jsonFiled.forEach {
+                if (jsonObject.containsKey(it)) {
+                    json[it] = jsonObject[it].toString()
+                } else {
+                    log.error { "$customizeRequestId json filed $it not found" }
+                }
+            }
+
+            return JSONObject().apply {
+                put(customizeRequestId, json)
             }
         }
-
-        val returnJson = JSONObject().apply {
-            put(customizeRequestId, json)
-        }
-        returnJsonFiled[id] = returnJson
-        return json
+        return null
     }
 
 
-    fun process(messageId: Int, id: String) {
-        CUSTOMIZE_REQUEST.requestList.firstOrNull { it.id == id }?.let { customizeRequest ->
-            processRequest(customizeRequest.id)?.let { responseTemp ->
-                var response: JSONObject? = responseTemp
-                val responseProcess = customizeRequest.responseProcess
-                responseProcess.conditionProcess?.let { conditionProcess ->
-                    when (conditionProcess.notExists.process) {
-                        NotExists.RE_REQUEST -> {
-                            val tryCount = conditionProcess.notExists.tryCount ?: 5
-                            val interval = conditionProcess.notExists.interval ?: 1
-                            var requestSuccess = false
-                            for (i in 0 until tryCount) {
-                                if (response != null && processCondition(conditionProcess.condition, response!!)) {
-                                    requestSuccess = true
-                                    break
-                                } else {
-                                    response = processRequest(customizeRequest.id)
+    fun process(id: String): JSONObject? {
+        try {
+            CUSTOMIZE_REQUEST.requestList.firstOrNull { it.id == id }?.let { customizeRequest ->
+                return processRequest(customizeRequest.id)?.let { responseTemp ->
+                    var response: JSONObject? = responseTemp
+                    val responseProcess = customizeRequest.responseProcess
+                    responseProcess.conditionProcess?.let { conditionProcess ->
+                        when (conditionProcess.notExists.process) {
+                            NotExists.RE_REQUEST -> {
+                                val tryCount = conditionProcess.notExists.tryCount ?: 5
+                                val interval = conditionProcess.notExists.interval ?: 1
+                                var requestSuccess = false
+                                for (i in 0 until tryCount) {
+                                    if (response != null && processCondition(conditionProcess.condition, response!!)) {
+                                        requestSuccess = true
+                                        break
+                                    } else {
+                                        response = processRequest(customizeRequest.id)
+                                    }
+                                    TimeUnit.SECONDS.sleep(interval.toLong())
                                 }
-                                TimeUnit.SECONDS.sleep(interval.toLong())
+                                if (!requestSuccess) {
+                                    log.warn { "customize id : ${customizeRequest.id} -> Unable to meet condition Retry exceeded the upper limit  " }
+                                    return null
+                                }
                             }
-                            if (!requestSuccess) {
-                                log.warn { "customize id : ${customizeRequest.id} -> Unable to meet condition Retry exceeded the upper limit  " }
-                                return
-                            }
-                        }
 
-                        NotExists.IGNORE -> {
-                            if (!processCondition(conditionProcess.condition, response!!)) {
-                                log.warn { "customize id : ${customizeRequest.id} -> Failure to meet conditions was ignored " }
-                                return
+                            NotExists.IGNORE -> {
+                                if (!processCondition(conditionProcess.condition, response!!)) {
+                                    log.warn { "customize id : ${customizeRequest.id} -> Failure to meet conditions was ignored " }
+                                    return null
+                                }
                             }
                         }
                     }
-                }
-                responseProcess.returnMessage?.let { message ->
-                    processReturnMessage(messageId, message, response!!)
-                }
-                responseProcess.returnJsonFiled?.let { jsonFiled ->
+
+
+                    processDownload(responseProcess, response!!)
+
                     processReturnJsonFiled(
-                        messageId,
-                        customizeRequest.id,
-                        customizeRequest.requestDetailed.url,
-                        jsonFiled,
-                        response!!
+                        customizeRequest.id, customizeRequest.requestDetailed.url, responseProcess, response!!
                     )
+
                 }
-                responseProcess.download?.let { download ->
-                    var path = download.downloadPath
-                    val fields = path.scanDollarString()
-                    fields.forEach { field ->
-                        path = MatcherData.replaceDollardName(path, field, response!!.getStringZ(field))
-                    }
-                    thread(start = true) {
-                        requestData.downloadStream(
-                            response!!.getStringZ(download.downloadFiled)!!,
-                            path
-                        )
-                    }
-                }
+            } ?: run {
+                log.error { "customize request not found or failed id : $id" }
             }
-        } ?: run {
-            log.error { "customize request not found or failed id : $id" }
+        } catch (e: Exception) {
+            log.error { e.printStackTrace() }
+            return null
+        }
+        return null
+    }
+
+
+    @Async
+    fun processDownload(responseProcess: ResponseProcess, response: JSONObject) {
+        responseProcess.download?.let { download ->
+            var path = download.downloadPath
+            val fields = path.scanDollarString()
+            fields.forEach { field ->
+                path = MatcherData.replaceDollardName(path, field, response.getStringZ(field))
+            }
+            requestData.downloadStream(
+                response.getStringZ(download.downloadFiled)!!, path
+            )
         }
     }
 }
