@@ -90,23 +90,33 @@ json文件不支持注释
 通过配置文件customize_command.json
 ````json
 {
-	"customize_command_list":[
-		{
-			"command":"^(ping)$", //命令
-			"group_list":[],    // 该命令只在该群生效
-			"permissions_message":"权限不允许",  //权限不足回复内容 如果字符串为空"permissions_message":"" 表示不回复
-			"return_message":" 我在哦~", // 成功执行
-                        "deep_message": { // 深入发送消息 可无限延伸 该字段可为null
-                          "message": "${sender.senderName}", // 下一条消息
-                          "deep_message": {
-                            "message": "${sender.message}" // 下一条消息
-                          }
-                        },
-			"role":"member",  //权限
-			"sender_list":[], // 指定发送者QQ 只有该用户能够触发 
-			"probability": 1.0  // 触发概率 0.0 ~ 1.0
-		}
-	]
+  "customize_command_list": [
+    {
+      "command": "^(ping)$",
+      //命令
+      "group_list": [],
+      // 该命令只在该群生效
+      "permissions_message": "权限不允许",
+      //权限不足回复内容 如果字符串为空"permissions_message":"" 表示不回复
+      "return_message": " 我在哦~",
+      // 成功执行
+      "deep_message": {
+        // 深入发送消息 可无限延伸 该字段可为null
+        "message": "${sender.senderName}",
+        // 下一条消息
+        "deep_message": {
+          "message": "${sender.message}"
+          // 下一条消息
+        }
+      },
+      "role": "member",
+      //权限
+      "sender_list": [],
+      // 指定发送者QQ 只有该用户能够触发 
+      "probability": 1.0
+      // 触发概率 0.0 ~ 1.0
+    }
+  ]
 }
 ````
 ##### 获取发送者信息
@@ -129,30 +139,45 @@ json文件不支持注释
 {
   "request_list": [
     {
-      "id": "get_img",  // 自定义名称
-      "request_detailed": { //详细参看request下的bilibili_request.json
-        "url": "https://image.anosu.top/pixiv/json?r18=0&keyword=arknights",  //请求url
-        "method": "get" // get请求
+      "id": "get_img",
+      // 自定义名称
+      "request_detailed": {
+        //详细参看request下的bilibili_request.json
+        "url": "https://image.anosu.top/pixiv/json?r18=0&keyword=arknights",
+        //请求url
+        "method": "get"
+        // get请求
       },
       "response_process": {
         "condition_process": {
-          "condition": "明日方舟", //包含 正则表达式 判断http请求返回的数据中是否包含明日方舟字符 可不设置
-          "not_exists": { // 不满足条件
-            "process": "RE_REQUEST", // IGNORE 忽略,RE_REQUEST 重试
-            "try_count": 5, //尝试次数  仅在RE_REQUEST下生效
-            "interval": 1 //每次请求后睡眠时间 以整数秒为单位  仅在RE_REQUEST下生效  
+          "condition": "明日方舟",
+          //包含 正则表达式 判断http请求返回的数据中是否包含明日方舟字符 可不设置
+          "not_exists": {
+            // 不满足条件
+            "process": "RE_REQUEST",
+            // IGNORE 忽略,RE_REQUEST 重试
+            "try_count": 5,
+            //尝试次数  仅在RE_REQUEST下生效
+            "interval": 1
+            //每次请求后睡眠时间 以整数秒为单位  仅在RE_REQUEST下生效  
           }
         },
-        "return_json_filed": [ // 保存请求返回的字段
-          "url", 
+        "return_json_filed": [
+          // 保存请求返回的字段
+          "url",
           "uid",
           "title",
-          "uuid",  // 固有字段 随机生成的uuid
-          "this"  // 固有字段 request_detailed下的url
+          "uuid",
+          // 固有字段 随机生成的uuid
+          "this"
+          // 固有字段 request_detailed下的url
         ],
-        "download": { // 发送请求并下载流文件 可不设置
-          "download_filed": "url", // 使用return_json_filed中保存的字段
-          "download_path": "E:/images/ark/${title}-${uid}.png" //保存至本地  ${title}使用return_json_filed中保存的字段
+        "download": {
+          // 发送请求并下载流文件 可不设置
+          "download_filed": "url",
+          // 使用return_json_filed中保存的字段
+          "download_path": "E:/images/ark/${title}-${uid}.png"
+          //保存至本地  ${title}使用return_json_filed中保存的字段
         }
       }
     }
