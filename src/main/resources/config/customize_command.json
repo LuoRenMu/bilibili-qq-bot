@@ -7,6 +7,15 @@
       "sender_list": [],
       "group_list": [],
       "role": "member"
+    },
+    {
+      "command":"^(翻译)",
+      "group_list":[],
+      "permissions_message":"权限不允许",
+      "probability":1.0,
+      "return_message":"${customize_request.baidu_fanyi.data[0].k} 该api只能翻译单个词语",
+      "role":"member",
+      "sender_list":[]
     }
   ]
 }

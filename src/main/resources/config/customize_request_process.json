@@ -25,6 +25,22 @@
           "download_path": "E:/images/ark/${title}-${uid}.png"
         }
       }
+    },
+    {
+      "id": "baidu_fanyi",
+      "request_detailed": {
+        "method": "post",
+        "url": "https://fanyi.baidu.com/sug",
+        "body": {
+          "name": "kw",
+          "content": "${翻译\\s*(\\S+)}"
+        }
+      },
+      "response_process": {
+        "return_json_filed": [
+          "data[0]"
+        ]
+      }
     }
   ]
 }

@@ -41,6 +41,5 @@ class RequestTest(
                 probability = 0.3
             )
         )
-        throw NoFurtherProcessException(commandSender, null)
     }
 }
