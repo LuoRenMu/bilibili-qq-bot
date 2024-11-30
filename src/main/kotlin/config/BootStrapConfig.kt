@@ -3,8 +3,15 @@ package cn.luorenmu.config
 import cn.hutool.core.io.resource.ResourceUtil
 import cn.luorenmu.MainApplication
 import cn.luorenmu.action.listenProcess.BilibiliMessageCollect
-import cn.luorenmu.common.utils.*
-import cn.luorenmu.common.utils.file.*
+import cn.luorenmu.common.utils.JsonObjectUtils
+import cn.luorenmu.common.utils.file.BilibiliCacheUtils
+import cn.luorenmu.common.utils.file.CommandFileUtils.initCommandFile
+import cn.luorenmu.common.utils.file.CustomizeCommandFileUtils.initCustomizeCommandFile
+import cn.luorenmu.common.utils.file.CustomizeRequestProcessFileUtils.initCustomizeRequest
+import cn.luorenmu.common.utils.file.FilePathUtils.getVideoPath
+import cn.luorenmu.common.utils.file.MessageConvertFileUtils.initMessageConvert
+import cn.luorenmu.common.utils.file.SettingFileUtils.SETTING
+import cn.luorenmu.common.utils.file.SettingFileUtils.initSetting
 import cn.luorenmu.file.InitializeFile
 import cn.luorenmu.file.ReadWriteFile
 import com.alibaba.fastjson2.JSONObject
@@ -71,7 +78,7 @@ class BotStrapConfig(
                     ReadWriteFile.entityWriteFileToCurrentDir(filePath.value, jsonObj)
                 }
 
-            }else{
+            } else {
                 ReadWriteFile.entityWriteFileToCurrentDir(filePath.value, initJsonObj)
                 initJsonObj = ReadWriteFile.readCurrentFileJson(filePath.value).to<JSONObject>()
             }

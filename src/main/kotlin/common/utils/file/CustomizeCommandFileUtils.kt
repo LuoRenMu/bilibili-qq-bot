@@ -10,32 +10,33 @@ import java.io.File
  * @author LoMu
  * Date 2024.11.27 12:07
  */
+object CustomizeCommandFileUtils {
+    var CUSTOMIZE_COMMAND = CustomizeCommand()
+    val CUSTOMIZER_COMMAND_PATH = ReadWriteFile.CURRENT_PATH + "customize_command.json"
 
-var CUSTOMIZE_COMMAND = CustomizeCommand()
-val CUSTOMIZER_COMMAND_PATH = ReadWriteFile.CURRENT_PATH + "customize_command.json"
 
+    @Synchronized
+    fun initCustomizeCommandFile(): Boolean {
+        if (!File(CUSTOMIZER_COMMAND_PATH).exists()) {
+            val initCustomizeCommand =
+                ResourceUtil.getResource("config/customize_command.json").openStream().bufferedReader().readText()
+                    .to<CustomizeCommand>()
 
-@Synchronized
-fun initCustomizeCommandFile(): Boolean {
-    if (!File(CUSTOMIZER_COMMAND_PATH).exists()) {
-        val initCustomizeCommand =
-            ResourceUtil.getResource("config/customize_command.json").openStream().bufferedReader().readText()
-                .to<CustomizeCommand>()
+            CUSTOMIZE_COMMAND = initCustomizeCommand
+            ReadWriteFile.entityWriteFile(CUSTOMIZER_COMMAND_PATH, initCustomizeCommand)
+            return true
+        } else {
+            loadCustomizeCommandFile()
+        }
 
-        CUSTOMIZE_COMMAND = initCustomizeCommand
-        ReadWriteFile.entityWriteFile(CUSTOMIZER_COMMAND_PATH, initCustomizeCommand)
-        return true
-    } else {
-        loadCustomizeCommandFile()
+        return false
     }
 
-    return false
-}
+    @Synchronized
+    fun loadCustomizeCommandFile(): CustomizeCommand {
+        val customizeCommand = ReadWriteFile.readFileJson(CUSTOMIZER_COMMAND_PATH).to<CustomizeCommand>()
+        CUSTOMIZE_COMMAND = customizeCommand
 
-@Synchronized
-fun loadCustomizeCommandFile(): CustomizeCommand {
-    val customizeCommand = ReadWriteFile.readFileJson(CUSTOMIZER_COMMAND_PATH).to<CustomizeCommand>()
-    CUSTOMIZE_COMMAND = customizeCommand
-
-    return CUSTOMIZE_COMMAND
+        return CUSTOMIZE_COMMAND
+    }
 }

@@ -7,7 +7,7 @@ import cn.luorenmu.command.entity.CommandSender
 import cn.luorenmu.common.extensions.getValueByPath
 import cn.luorenmu.common.extensions.scanDollarString
 import cn.luorenmu.common.utils.MatcherData
-import cn.luorenmu.common.utils.file.CUSTOMIZE_REQUEST
+import cn.luorenmu.common.utils.file.CustomizeRequestProcessFileUtils.CUSTOMIZE_REQUEST
 import cn.luorenmu.entiy.Request.RequestDetailed
 import cn.luorenmu.request.RequestController
 import com.alibaba.fastjson2.*
@@ -32,9 +32,28 @@ class CustomizeRequestProcess(
     fun processRequest(requestDetailedTemp: RequestDetailed, message: String): CustomizeResponse {
         // 深拷贝
         val requestDetailed = requestDetailedTemp.toJSONString().to<RequestDetailed>()
-        val regex = requestDetailed.url.scanDollarString()
+        val urlRegex = requestDetailed.url.scanDollarString()
+        requestDetailed.body?.let {
+            if (it.isNotEmpty()) {
+                for (requestParam in it) {
+                    val bodyParamRegex = requestParam.content.scanDollarString()
+                    bodyParamRegex.forEach { regex ->
+                        regex.toRegex().find(message)?.let { matchResult ->
+                            requestParam.content = MatcherData.replaceDollardName(
+                                requestParam.content,
+                                regex,
+                                matchResult.groups[1]!!.value
+                            )
+                        } ?: run {
+                            log.error { "Regex does not match $requestParam" }
+                        }
+                    }
+                }
+            }
+        }
+
         val request = RequestController(requestDetailed)
-        regex.forEach {
+        urlRegex.forEach {
             it.toRegex().find(message)?.let { matchResult ->
                 request.replaceUrl(it, matchResult.groups[1]!!.value)
             } ?: run {
@@ -42,6 +61,7 @@ class CustomizeRequestProcess(
             }
 
         }
+
 
         try {
             request.request()?.let { httpResponse ->
@@ -76,10 +96,11 @@ class CustomizeRequestProcess(
             json["this"] = thisUrl
             json["uuid"] = UUID.randomUUID().toString()
             jsonFiled.forEach {
-                if (jsonObject.containsKey(it)) {
-                    json[it] = jsonObject[it].toString()
-                } else {
+                jsonObject.getValueByPath(it)?.let { str ->
+                    json[it.replace(".", "-")] = str
+                } ?: run {
                     log.error { "$customizeRequestId json filed $it not found" }
+                    return null
                 }
             }
 
@@ -143,7 +164,7 @@ class CustomizeRequestProcess(
                     val returnJsonFiled = processReturnJsonFiled(
                         customizeRequest.id, customizeRequest.requestDetailed.url, responseProcess, response!!
                     )
-                    CustomizeResponse(true, returnJsonFiled)
+                    CustomizeResponse(returnJsonFiled)
                 }
             } ?: run {
                 log.error { "customize request not found or failed id : $id" }

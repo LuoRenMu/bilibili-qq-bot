@@ -17,3 +17,7 @@ fun String.scanDollarString(): MutableList<String> {
     }
     return result
 }
+
+fun String.replaceDollarString(field: String, replace: String): String {
+    return this.replace("\${$field}", replace)
+}

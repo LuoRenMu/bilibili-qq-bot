@@ -1,13 +1,13 @@
 package cn.luorenmu.task
 
 import cn.luorenmu.action.listenProcess.BilibiliMessageCollect
-import cn.luorenmu.action.request.BilibiliRequestData
 import cn.luorenmu.action.listenProcess.entity.BilibiliArticle
+import cn.luorenmu.action.request.BilibiliRequestData
 import cn.luorenmu.common.extensions.groupList
 import cn.luorenmu.common.extensions.sendGroupListBilibiliarticle
 import cn.luorenmu.common.extensions.sendGroupMessageConvert
 import cn.luorenmu.common.utils.file.BilibiliCacheUtils
-import cn.luorenmu.common.utils.file.SETTING
+import cn.luorenmu.common.utils.file.SettingFileUtils.SETTING
 import cn.luorenmu.config.entity.MessageConvert
 import com.mikuac.shiro.common.utils.MsgUtils
 import com.mikuac.shiro.core.BotContainer

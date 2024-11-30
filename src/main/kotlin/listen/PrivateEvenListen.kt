@@ -6,7 +6,7 @@ import cn.luorenmu.command.entity.BotRole
 import cn.luorenmu.command.entity.CommandSender
 import cn.luorenmu.command.entity.MessageType
 import cn.luorenmu.common.extensions.sendPrivateMsg
-import cn.luorenmu.common.utils.file.SETTING
+import cn.luorenmu.common.utils.file.SettingFileUtils.SETTING
 import com.mikuac.shiro.annotation.PrivateMessageHandler
 import com.mikuac.shiro.annotation.PrivateMsgDeleteNoticeHandler
 import com.mikuac.shiro.annotation.common.Shiro

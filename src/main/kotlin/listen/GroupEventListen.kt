@@ -7,7 +7,7 @@ import cn.luorenmu.command.entity.BotRole
 import cn.luorenmu.command.entity.CommandSender
 import cn.luorenmu.command.entity.MessageType
 import cn.luorenmu.common.extensions.sendGroupMsgLimit
-import cn.luorenmu.common.utils.file.SETTING
+import cn.luorenmu.common.utils.file.SettingFileUtils.SETTING
 import com.mikuac.shiro.annotation.GroupMessageHandler
 import com.mikuac.shiro.annotation.common.Shiro
 import com.mikuac.shiro.core.Bot

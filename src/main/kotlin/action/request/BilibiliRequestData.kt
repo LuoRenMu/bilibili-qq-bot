@@ -1,8 +1,8 @@
 package cn.luorenmu.action.request
 
 import cn.luorenmu.action.request.entity.response.*
-import cn.luorenmu.common.utils.file.SETTING
-import cn.luorenmu.common.utils.getVideoPath
+import cn.luorenmu.common.utils.file.FilePathUtils
+import cn.luorenmu.common.utils.file.SettingFileUtils.SETTING
 import cn.luorenmu.entiy.Request.RequestParam
 import cn.luorenmu.listen.log
 import cn.luorenmu.request.RequestController
@@ -28,7 +28,7 @@ class BilibiliRequestData : RequestData() {
      *  @return null is video download failed  if video too large (limit length $minute minute) return false else true
      */
     fun downloadVideo(bvid: String, cid: Long): String? {
-        val outputPath = getVideoPath("bilibili/$bvid.flv")
+        val outputPath = FilePathUtils.getVideoPath("bilibili/$bvid.flv")
         synchronized(BilibiliRequestData::class) {
             if (File(outputPath).exists()) {
                 return outputPath

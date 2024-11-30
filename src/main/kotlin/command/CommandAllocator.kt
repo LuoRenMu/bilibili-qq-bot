@@ -3,7 +3,8 @@ package cn.luorenmu.command
 import cn.luorenmu.command.entity.BotRole
 import cn.luorenmu.command.entity.CommandId
 import cn.luorenmu.command.entity.CommandSender
-import cn.luorenmu.common.utils.file.COMMAND
+import cn.luorenmu.common.utils.file.CommandFileUtils.COMMAND
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component
 class CommandAllocator(
     val commandProcess: CommandProcess,
 ) {
+    private val log = KotlinLogging.logger {}
 
     /**
      * @param configRoleStr command config role

@@ -4,11 +4,12 @@ import cn.luorenmu.action.request.CustomizeRequestProcess
 import cn.luorenmu.command.entity.BotRole
 import cn.luorenmu.command.entity.CommandSender
 import cn.luorenmu.command.entity.DeepMessage
-import cn.luorenmu.common.extensions.getValueByPath
+import cn.luorenmu.common.extensions.getValueByPathSkipArray
+import cn.luorenmu.common.extensions.replaceDollarString
 import cn.luorenmu.common.extensions.scanDollarString
 import cn.luorenmu.common.utils.MatcherData
-import cn.luorenmu.common.utils.file.CUSTOMIZE_COMMAND
-import cn.luorenmu.common.utils.file.senderDataReplace
+import cn.luorenmu.common.utils.file.CustomizeCommandFileUtils.CUSTOMIZE_COMMAND
+import cn.luorenmu.common.utils.file.DataReplaceUtils.senderDataReplace
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 
@@ -53,12 +54,9 @@ class CustomizeCommandAllocator(
                                     }
                                     return@returnJsonFiled
                                 }
-                                returnMessage =
-                                    MatcherData.replaceDollardName(
-                                        returnMessage,
-                                        field,
-                                        response.jsonObject!!.getValueByPath(jsonField)
-                                    )
+                                val valueByPathSkipArray = response.jsonObject!!.getValueByPathSkipArray(jsonField)
+                                returnMessage = returnMessage.replaceDollarString(field, valueByPathSkipArray)
+
                             }
                         }
 

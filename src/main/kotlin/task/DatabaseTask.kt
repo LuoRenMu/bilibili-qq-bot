@@ -1,7 +1,7 @@
 package cn.luorenmu.task
 
 import cn.luorenmu.action.listenProcess.BilibiliEventListen
-import cn.luorenmu.common.utils.file.SETTING
+import cn.luorenmu.common.utils.file.SettingFileUtils.SETTING
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.io.File
